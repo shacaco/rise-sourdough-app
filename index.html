@@ -25,6 +25,12 @@
         input[type="number"] {
             background-color: #f9fafb;
         }
+        input[readonly] {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+            border-color: #d1d5db;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
@@ -33,29 +39,80 @@
         <!-- Title and Introduction -->
         <div class="text-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Rise</h1>
-            <p class="text-gray-500 mt-2">Enter your desired dough size and hydration percentages to get your ingredient weights.</p>
+            <p class="text-gray-500 mt-2">Calculate ingredient weights by total batch weight or per-unit weight and quantity.</p>
+        </div>
+
+        <!-- Calculation Mode Toggle -->
+        <div class="mb-6">
+            <div class="flex items-center justify-center space-x-4">
+                <span class="text-sm font-medium text-gray-700">Total Batch</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="calculation-mode-toggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    <span class="ml-3 text-sm font-medium text-gray-700">Per Unit</span>
+                </label>
+            </div>
         </div>
 
         <!-- Input Section -->
         <div class="space-y-4">
-            <!-- Total Dough Weight Input -->
-            <div>
-                <label for="total-weight" class="block text-sm font-medium text-gray-700">Total Dough Weight (including inclusions) (g)</label>
-                <div class="mt-1 relative rounded-md shadow-sm">
-                    <input type="number" id="total-weight" name="total-weight" value="750" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span class="text-gray-500 sm:text-sm">g</span>
+            <!-- Total Weight Mode Inputs -->
+            <div id="total-weight-mode" class="space-y-4">
+                <!-- Total Dough Weight Input -->
+                <div>
+                    <label for="total-weight" class="block text-sm font-medium text-gray-700">Total Dough Weight (including inclusions) (g)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="total-weight" name="total-weight" value="750" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">g</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inclusions Weight Input -->
+                <div>
+                    <label for="inclusions-weight" class="block text-sm font-medium text-gray-700">Inclusions (g)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="inclusions-weight" name="inclusions-weight" value="0" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">g</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Inclusions Weight Input -->
-            <div>
-                <label for="inclusions-weight" class="block text-sm font-medium text-gray-700">Inclusions (g)</label>
-                <div class="mt-1 relative rounded-md shadow-sm">
-                    <input type="number" id="inclusions-weight" name="inclusions-weight" value="0" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span class="text-gray-500 sm:text-sm">g</span>
+            <!-- Per Unit Mode Inputs -->
+            <div id="single-loaf-mode" class="space-y-4 hidden">
+                <!-- Unit Weight Input -->
+                <div>
+                    <label for="single-loaf-weight" class="block text-sm font-medium text-gray-700">Unit Weight (g)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="single-loaf-weight" name="single-loaf-weight" value="750" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">g</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantity Input -->
+                <div>
+                    <label for="number-of-loaves" class="block text-sm font-medium text-gray-700">Quantity</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="number-of-loaves" name="number-of-loaves" value="1" min="1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">units</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inclusions Weight Input (shared) -->
+                <div>
+                    <label for="inclusions-weight-single" class="block text-sm font-medium text-gray-700">Inclusions per Unit (g)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="inclusions-weight-single" name="inclusions-weight-single" value="0" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">g</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -114,7 +171,7 @@
                     </div>
                 </div>
                 <div>
-                    <label for="other-flours-percent" class="block text-sm font-medium text-gray-700">Other Flours (%)</label>
+                    <label for="other-flours-percent" class="block text-sm font-medium text-gray-500">Other Flours (%) <span class="text-xs text-gray-400">(calculated)</span></label>
                     <div class="mt-1 relative rounded-md shadow-sm">
                         <input type="number" id="other-flours-percent" name="other-flours-percent" value="0" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out" readonly>
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -177,8 +234,16 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Get all the necessary DOM elements
+            const calculationModeToggle = document.getElementById('calculation-mode-toggle');
+            const totalWeightMode = document.getElementById('total-weight-mode');
+            const singleLoafMode = document.getElementById('single-loaf-mode');
+            
             const totalWeightInput = document.getElementById('total-weight');
             const inclusionsWeightInput = document.getElementById('inclusions-weight');
+            const singleLoafWeightInput = document.getElementById('single-loaf-weight');
+            const numberOfLoavesInput = document.getElementById('number-of-loaves');
+            const inclusionsWeightSingleInput = document.getElementById('inclusions-weight-single');
+            
             const waterPercentInput = document.getElementById('water-percent');
             const saltPercentInput = document.getElementById('salt-percent');
             const levainPercentInput = document.getElementById('levain-percent');
@@ -198,11 +263,42 @@
             const levainFlourResultSpan = document.getElementById('levain-flour-result');
             const levainWaterResultSpan = document.getElementById('levain-water-result');
 
+            // Toggle between calculation modes
+            function toggleCalculationMode() {
+                const isSingleLoafMode = calculationModeToggle.checked;
+                
+                if (isSingleLoafMode) {
+                    totalWeightMode.classList.add('hidden');
+                    singleLoafMode.classList.remove('hidden');
+                } else {
+                    totalWeightMode.classList.remove('hidden');
+                    singleLoafMode.classList.add('hidden');
+                }
+                
+                // Recalculate when switching modes
+                calculateSourdough();
+            }
+
+            // Add event listener for toggle
+            calculationModeToggle.addEventListener('change', toggleCalculationMode);
+
             // Function to perform the calculations
             function calculateSourdough() {
+                const isSingleLoafMode = calculationModeToggle.checked;
+                
                 // Get the input values and convert them to numbers
-                const totalWeight = parseFloat(totalWeightInput.value);
-                const inclusionsWeight = parseFloat(inclusionsWeightInput.value) || 0;
+                let totalWeight, inclusionsWeight;
+                
+                if (isSingleLoafMode) {
+                    const singleLoafWeight = parseFloat(singleLoafWeightInput.value);
+                    const numberOfLoaves = parseFloat(numberOfLoavesInput.value) || 1;
+                    inclusionsWeight = parseFloat(inclusionsWeightSingleInput.value) || 0;
+                    totalWeight = (singleLoafWeight - inclusionsWeight) * numberOfLoaves + (inclusionsWeight * numberOfLoaves);
+                } else {
+                    totalWeight = parseFloat(totalWeightInput.value);
+                    inclusionsWeight = parseFloat(inclusionsWeightInput.value) || 0;
+                }
+                
                 const waterPercent = parseFloat(waterPercentInput.value);
                 const saltPercent = parseFloat(saltPercentInput.value);
                 const levainPercent = parseFloat(levainPercentInput.value);
@@ -273,7 +369,7 @@
             }
 
             // Add event listeners for input changes
-            [totalWeightInput, inclusionsWeightInput, waterPercentInput, saltPercentInput, levainPercentInput, levainHydrationPercentInput, whiteFlourPercentInput].forEach(input => {
+            [totalWeightInput, inclusionsWeightInput, singleLoafWeightInput, numberOfLoavesInput, inclusionsWeightSingleInput, waterPercentInput, saltPercentInput, levainPercentInput, levainHydrationPercentInput, whiteFlourPercentInput].forEach(input => {
                 input.addEventListener('input', calculateSourdough);
             });
 
