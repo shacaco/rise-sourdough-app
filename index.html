@@ -42,7 +42,7 @@
             <div>
                 <label for="total-weight" class="block text-sm font-medium text-gray-700">Total Dough Weight (including inclusions) (g)</label>
                 <div class="mt-1 relative rounded-md shadow-sm">
-                    <input type="number" id="total-weight" name="total-weight" placeholder="e.g., 900" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    <input type="number" id="total-weight" name="total-weight" value="750" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                         <span class="text-gray-500 sm:text-sm">g</span>
                     </div>
@@ -53,7 +53,7 @@
             <div>
                 <label for="inclusions-weight" class="block text-sm font-medium text-gray-700">Inclusions (g)</label>
                 <div class="mt-1 relative rounded-md shadow-sm">
-                    <input type="number" id="inclusions-weight" name="inclusions-weight" value="0" placeholder="e.g., 50" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    <input type="number" id="inclusions-weight" name="inclusions-weight" value="0" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                         <span class="text-gray-500 sm:text-sm">g</span>
                     </div>
@@ -276,6 +276,9 @@
             [totalWeightInput, inclusionsWeightInput, waterPercentInput, saltPercentInput, levainPercentInput, levainHydrationPercentInput, whiteFlourPercentInput].forEach(input => {
                 input.addEventListener('input', calculateSourdough);
             });
+
+            // Initial calculation on page load
+            calculateSourdough();
         });
 
         // PWA Service Worker Registration
@@ -292,3 +295,4 @@
 
 </body>
 </html>
+
