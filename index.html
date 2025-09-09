@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rise - Sourdough Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Theme color for browser UI -->
+    <meta name="theme-color" content="#ffffff"/>
+    
+    <!-- Icons for PWA -->
+    <link rel="apple-touch-icon" href="https://placehold.co/180x180/f3e9dc/4a2c0a?text=Rise">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .container {
+            max-width: 420px;
+        }
+        input[type="number"] {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="container mx-auto p-6 bg-white rounded-2xl shadow-xl">
+        <!-- Title and Introduction -->
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Rise</h1>
+            <p class="text-gray-500 mt-2">Enter your desired dough size and hydration percentages to get your ingredient weights.</p>
+        </div>
+
+        <!-- Input Section -->
+        <div class="space-y-4">
+            <!-- Total Dough Weight Input -->
+            <div>
+                <label for="total-weight" class="block text-sm font-medium text-gray-700">Total Dough Weight (including inclusions) (g)</label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <input type="number" id="total-weight" name="total-weight" placeholder="e.g., 900" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <span class="text-gray-500 sm:text-sm">g</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inclusions Weight Input -->
+            <div>
+                <label for="inclusions-weight" class="block text-sm font-medium text-gray-700">Inclusions (g)</label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <input type="number" id="inclusions-weight" name="inclusions-weight" value="0" placeholder="e.g., 50" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <span class="text-gray-500 sm:text-sm">g</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Baker's Percentages Section -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="water-percent" class="block text-sm font-medium text-gray-700">Water (%)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="water-percent" name="water-percent" value="70" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="salt-percent" class="block text-sm font-medium text-gray-700">Salt (%)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="salt-percent" name="salt-percent" value="2" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="levain-percent" class="block text-sm font-medium text-gray-700">Levain (%)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="levain-percent" name="levain-percent" value="20" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="levain-hydration-percent" class="block text-sm font-medium text-gray-700">Levain Hydration (%)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="levain-hydration-percent" name="levain-hydration-percent" value="100" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flour Mix Percentages Section -->
+            <hr class="border-gray-300 mt-4 mb-2">
+            <h3 class="text-lg font-bold text-gray-800">Flour Mix</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="white-flour-percent" class="block text-sm font-medium text-gray-700">White Flour (%)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="white-flour-percent" name="white-flour-percent" value="100" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="other-flours-percent" class="block text-sm font-medium text-gray-700">Other Flours (%)</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" id="other-flours-percent" name="other-flours-percent" value="0" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out" readonly>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="mt-6 p-6 bg-gray-50 rounded-lg hidden">
+            <h2 class="text-lg font-bold text-gray-900 mb-4">Ingredients</h2>
+            <ul class="space-y-2">
+                <li class="flex justify-between items-center text-gray-900">
+                    <span>Main Flour</span>
+                    <span id="main-flour-result" class="font-semibold text-gray-900"></span>
+                </li>
+                <li class="flex justify-between items-center text-gray-800">
+                    <span class="ml-4">- White Flour</span>
+                    <span id="white-flour-result" class="font-semibold text-gray-900"></span>
+                </li>
+                <li class="flex justify-between items-center text-gray-800">
+                    <span class="ml-4">- Other Flours</span>
+                    <span id="other-flours-result" class="font-semibold text-gray-900"></span>
+                </li>
+                <li class="flex justify-between items-center text-gray-900">
+                    <span>Main Water</span>
+                    <span id="main-water-result" class="font-semibold text-gray-900"></span>
+                </li>
+                <li class="flex justify-between items-center text-gray-900">
+                    <span>Salt</span>
+                    <span id="salt-result" class="font-semibold text-gray-900"></span>
+                </li>
+                <li class="flex justify-between items-center text-gray-900">
+                    <span>Levain</span>
+                    <span id="levain-result" class="font-semibold text-gray-900"></span>
+                </li>
+                <li class="flex justify-between items-center text-gray-900">
+                    <span>Inclusions</span>
+                    <span id="inclusions-result" class="font-semibold text-gray-900"></span>
+                </li>
+            </ul>
+            
+            <hr class="my-4 border-gray-300">
+            <h3 class="text-md font-bold text-gray-900 mb-2">Levain Breakdown</h3>
+            <ul class="space-y-2">
+                <li class="flex justify-between items-center text-gray-800">
+                    <span>Levain Flour</span>
+                    <span id="levain-flour-result" class="font-semibold text-gray-900"></span>
+                </li>
+                <li class="flex justify-between items-center text-gray-800">
+                    <span>Levain Water</span>
+                    <span id="levain-water-result" class="font-semibold text-gray-900"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all the necessary DOM elements
+            const totalWeightInput = document.getElementById('total-weight');
+            const inclusionsWeightInput = document.getElementById('inclusions-weight');
+            const waterPercentInput = document.getElementById('water-percent');
+            const saltPercentInput = document.getElementById('salt-percent');
+            const levainPercentInput = document.getElementById('levain-percent');
+            const levainHydrationPercentInput = document.getElementById('levain-hydration-percent');
+            const whiteFlourPercentInput = document.getElementById('white-flour-percent');
+            const otherFloursPercentInput = document.getElementById('other-flours-percent');
+            const resultsDiv = document.getElementById('results');
+            
+            const mainFlourResultSpan = document.getElementById('main-flour-result');
+            const mainWaterResultSpan = document.getElementById('main-water-result');
+            const saltResultSpan = document.getElementById('salt-result');
+            const levainResultSpan = document.getElementById('levain-result');
+            const inclusionsResultSpan = document.getElementById('inclusions-result');
+            const whiteFlourResultSpan = document.getElementById('white-flour-result');
+            const otherFloursResultSpan = document.getElementById('other-flours-result');
+            
+            const levainFlourResultSpan = document.getElementById('levain-flour-result');
+            const levainWaterResultSpan = document.getElementById('levain-water-result');
+
+            // Function to perform the calculations
+            function calculateSourdough() {
+                // Get the input values and convert them to numbers
+                const totalWeight = parseFloat(totalWeightInput.value);
+                const inclusionsWeight = parseFloat(inclusionsWeightInput.value) || 0;
+                const waterPercent = parseFloat(waterPercentInput.value);
+                const saltPercent = parseFloat(saltPercentInput.value);
+                const levainPercent = parseFloat(levainPercentInput.value);
+                const levainHydrationPercent = parseFloat(levainHydrationPercentInput.value);
+                const whiteFlourPercent = parseFloat(whiteFlourPercentInput.value);
+
+                // Basic validation
+                if (isNaN(totalWeight) || totalWeight <= 0 || isNaN(waterPercent) || isNaN(saltPercent) || isNaN(levainPercent) || isNaN(levainHydrationPercent) || totalWeight <= inclusionsWeight || isNaN(whiteFlourPercent) || whiteFlourPercent > 100 || whiteFlourPercent < 0) {
+                    // Hide results if input is invalid
+                    resultsDiv.classList.add('hidden');
+                    return;
+                }
+
+                // Update the other flour percentage
+                otherFloursPercentInput.value = 100 - whiteFlourPercent;
+
+                // Calculate the dough weight without inclusions
+                const doughWeight = totalWeight - inclusionsWeight;
+
+                // Convert percentages to decimals
+                const waterRatio = waterPercent / 100;
+                const saltRatio = saltPercent / 100;
+                const levainRatio = levainPercent / 100;
+                const levainHydrationRatio = levainHydrationPercent / 100;
+                
+                // --- CORRECTED CALCULATION LOGIC ---
+                // The total dough weight (without inclusions) is the sum of total flour, total water, and salt.
+                // All percentages are based on the total flour weight (F_total).
+                // DoughWeight = F_total + (F_total * waterRatio) + (F_total * saltRatio)
+                // DoughWeight = F_total * (1 + waterRatio + saltRatio)
+                
+                const doughRatio = 1 + waterRatio + saltRatio;
+                const totalFlourWeight = doughWeight / doughRatio;
+
+                // Now calculate the weight of all ingredients
+                const totalWaterWeight = totalFlourWeight * waterRatio;
+                const totalSaltWeight = totalFlourWeight * saltRatio;
+                const totalLevainWeight = totalFlourWeight * levainRatio;
+
+                // Breakdown the levain into its flour and water components
+                const levainFlourWeight = totalLevainWeight / (1 + levainHydrationRatio);
+                const levainWaterWeight = totalLevainWeight - levainFlourWeight;
+
+                // Calculate the main dough flour and water by subtracting levain components
+                const mainFlourWeight = totalFlourWeight - levainFlourWeight;
+                const mainWaterWeight = totalWaterWeight - levainWaterWeight;
+
+                // Calculate the breakdown of the MAIN flour
+                const whiteFlourWeight = mainFlourWeight * (whiteFlourPercent / 100);
+                const otherFloursWeight = mainFlourWeight - whiteFlourWeight;
+                
+                // Display the results with specified rounding
+                mainFlourResultSpan.textContent = `${mainFlourWeight.toFixed(0)} g`;
+                mainWaterResultSpan.textContent = `${mainWaterWeight.toFixed(0)} g`;
+                saltResultSpan.textContent = `${totalSaltWeight.toFixed(1)} g`;
+                levainResultSpan.textContent = `${totalLevainWeight.toFixed(0)} g`;
+                inclusionsResultSpan.textContent = `${inclusionsWeight.toFixed(0)} g`;
+                
+                whiteFlourResultSpan.textContent = `${whiteFlourWeight.toFixed(0)} g`;
+                otherFloursResultSpan.textContent = `${otherFloursWeight.toFixed(0)} g`;
+                
+                // Display the levain breakdown
+                levainFlourResultSpan.textContent = `${levainFlourWeight.toFixed(0)} g`;
+                levainWaterResultSpan.textContent = `${levainWaterWeight.toFixed(0)} g`;
+
+                // Show the results section
+                resultsDiv.classList.remove('hidden');
+            }
+
+            // Add event listeners for input changes
+            [totalWeightInput, inclusionsWeightInput, waterPercentInput, saltPercentInput, levainPercentInput, levainHydrationPercentInput, whiteFlourPercentInput].forEach(input => {
+                input.addEventListener('input', calculateSourdough);
+            });
+        });
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+
+</body>
+</html>
