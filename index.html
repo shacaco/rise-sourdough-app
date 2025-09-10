@@ -31,6 +31,54 @@
             cursor: not-allowed;
             border-color: #d1d5db;
         }
+        
+        /* Validation styles */
+        .input-error {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+        
+        .input-success {
+            border-color: #10b981 !important;
+            background-color: #f0fdf4 !important;
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .validation-summary {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .validation-summary.show {
+            display: block;
+        }
+        
+        .validation-summary h4 {
+            color: #dc2626;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .validation-summary ul {
+            list-style-type: disc;
+            margin-left: 1rem;
+            color: #dc2626;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
@@ -54,6 +102,12 @@
             </div>
         </div>
 
+        <!-- Validation Summary -->
+        <div id="validation-summary" class="validation-summary">
+            <h4>Please fix the following issues:</h4>
+            <ul id="validation-errors-list"></ul>
+        </div>
+
         <!-- Input Section -->
         <div class="space-y-4">
             <!-- Total Weight Mode Inputs -->
@@ -62,22 +116,24 @@
                 <div>
                     <label for="total-weight" class="block text-sm font-medium text-gray-700">Total Dough Weight (including inclusions) (g)</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="total-weight" name="total-weight" value="750" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="total-weight" name="total-weight" value="750" min="50" max="50000" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">g</span>
                         </div>
                     </div>
+                    <div id="total-weight-error" class="error-message"></div>
                 </div>
 
                 <!-- Inclusions Weight Input -->
                 <div>
                     <label for="inclusions-weight" class="block text-sm font-medium text-gray-700">Inclusions (g)</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="inclusions-weight" name="inclusions-weight" value="0" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="inclusions-weight" name="inclusions-weight" value="0" min="0" max="20000" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">g</span>
                         </div>
                     </div>
+                    <div id="inclusions-weight-error" class="error-message"></div>
                 </div>
             </div>
 
@@ -87,33 +143,36 @@
                 <div>
                     <label for="single-loaf-weight" class="block text-sm font-medium text-gray-700">Unit Weight (g)</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="single-loaf-weight" name="single-loaf-weight" value="750" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="single-loaf-weight" name="single-loaf-weight" value="750" min="50" max="2000" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">g</span>
                         </div>
                     </div>
+                    <div id="single-loaf-weight-error" class="error-message"></div>
                 </div>
 
                 <!-- Quantity Input -->
                 <div>
                     <label for="number-of-loaves" class="block text-sm font-medium text-gray-700">Quantity</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="number-of-loaves" name="number-of-loaves" value="1" min="1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="number-of-loaves" name="number-of-loaves" value="1" min="1" max="100" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">units</span>
                         </div>
                     </div>
+                    <div id="number-of-loaves-error" class="error-message"></div>
                 </div>
 
                 <!-- Inclusions Weight Input (shared) -->
                 <div>
                     <label for="inclusions-weight-single" class="block text-sm font-medium text-gray-700">Inclusions per Unit (g)</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="inclusions-weight-single" name="inclusions-weight-single" value="0" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="inclusions-weight-single" name="inclusions-weight-single" value="0" min="0" max="500" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">g</span>
                         </div>
                     </div>
+                    <div id="inclusions-weight-single-error" class="error-message"></div>
                 </div>
             </div>
 
@@ -122,38 +181,42 @@
                 <div>
                     <label for="water-percent" class="block text-sm font-medium text-gray-700">Water (%)</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="water-percent" name="water-percent" value="70" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="water-percent" name="water-percent" value="70" min="50" max="120" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">%</span>
                         </div>
                     </div>
+                    <div id="water-percent-error" class="error-message"></div>
                 </div>
                 <div>
                     <label for="salt-percent" class="block text-sm font-medium text-gray-700">Salt (%)</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="salt-percent" name="salt-percent" value="2" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="salt-percent" name="salt-percent" value="2" min="1" max="3" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">%</span>
                         </div>
                     </div>
+                    <div id="salt-percent-error" class="error-message"></div>
                 </div>
                 <div>
                     <label for="levain-percent" class="block text-sm font-medium text-gray-700">Levain (%)</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="levain-percent" name="levain-percent" value="20" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="levain-percent" name="levain-percent" value="20" min="5" max="50" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">%</span>
                         </div>
                     </div>
+                    <div id="levain-percent-error" class="error-message"></div>
                 </div>
                 <div>
                     <label for="levain-hydration-percent" class="block text-sm font-medium text-gray-700">Levain Hydration (%)</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="levain-hydration-percent" name="levain-hydration-percent" value="100" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="levain-hydration-percent" name="levain-hydration-percent" value="100" min="50" max="200" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">%</span>
                         </div>
                     </div>
+                    <div id="levain-hydration-percent-error" class="error-message"></div>
                 </div>
             </div>
 
@@ -164,11 +227,12 @@
                 <div>
                     <label for="white-flour-percent" class="block text-sm font-medium text-gray-700">White Flour (%)</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="white-flour-percent" name="white-flour-percent" value="100" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <input type="number" id="white-flour-percent" name="white-flour-percent" value="100" min="0" max="100" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">%</span>
                         </div>
                     </div>
+                    <div id="white-flour-percent-error" class="error-message"></div>
                 </div>
                 <div>
                     <label for="other-flours-percent" class="block text-sm font-medium text-gray-500">Other Flours (%) <span class="text-xs text-gray-400">(calculated)</span></label>
@@ -282,8 +346,192 @@
             // Add event listener for toggle
             calculationModeToggle.addEventListener('change', toggleCalculationMode);
 
+            // Validation rules and messages
+            const validationRules = {
+                'total-weight': {
+                    min: 50,
+                    max: 50000,
+                    message: 'Total dough weight must be between 50g and 50000g'
+                },
+                'inclusions-weight': {
+                    min: 0,
+                    max: 20000,
+                    message: 'Inclusions weight must be between 0g and 20000g'
+                },
+                'single-loaf-weight': {
+                    min: 50,
+                    max: 2000,
+                    message: 'Unit weight must be between 50g and 2000g'
+                },
+                'number-of-loaves': {
+                    min: 1,
+                    max: 100,
+                    message: 'Quantity must be between 1 and 100 units'
+                },
+                'inclusions-weight-single': {
+                    min: 0,
+                    max: 500,
+                    message: 'Inclusions per unit must be between 0g and 500g'
+                },
+                'water-percent': {
+                    min: 50,
+                    max: 120,
+                    message: 'Water percentage must be between 50% and 120%'
+                },
+                'salt-percent': {
+                    min: 1,
+                    max: 3,
+                    message: 'Salt percentage must be between 1% and 3%'
+                },
+                'levain-percent': {
+                    min: 5,
+                    max: 50,
+                    message: 'Levain percentage must be between 5% and 50%'
+                },
+                'levain-hydration-percent': {
+                    min: 50,
+                    max: 200,
+                    message: 'Levain hydration must be between 50% and 200%'
+                },
+                'white-flour-percent': {
+                    min: 0,
+                    max: 100,
+                    message: 'White flour percentage must be between 0% and 100%'
+                }
+            };
+
+            // Validation state
+            let validationErrors = [];
+            let isValid = true;
+
+            // Function to validate a single input
+            function validateInput(inputId, value) {
+                const rule = validationRules[inputId];
+                if (!rule) return true;
+
+                const numValue = parseFloat(value);
+                const errorElement = document.getElementById(inputId + '-error');
+                const inputElement = document.getElementById(inputId);
+
+                // Clear previous error state
+                if (errorElement) {
+                    errorElement.classList.remove('show');
+                    errorElement.textContent = '';
+                }
+                if (inputElement) {
+                    inputElement.classList.remove('input-error', 'input-success');
+                }
+
+                // Check if value is valid number
+                if (isNaN(numValue)) {
+                    if (errorElement) {
+                        errorElement.textContent = 'Please enter a valid number';
+                        errorElement.classList.add('show');
+                    }
+                    if (inputElement) {
+                        inputElement.classList.add('input-error');
+                    }
+                    return false;
+                }
+
+                // Check range
+                if (numValue < rule.min || numValue > rule.max) {
+                    if (errorElement) {
+                        errorElement.textContent = rule.message;
+                        errorElement.classList.add('show');
+                    }
+                    if (inputElement) {
+                        inputElement.classList.add('input-error');
+                    }
+                    return false;
+                }
+
+                // Success state
+                if (inputElement) {
+                    inputElement.classList.add('input-success');
+                }
+                return true;
+            }
+
+            // Function to validate all inputs
+            function validateAllInputs() {
+                validationErrors = [];
+                isValid = true;
+
+                // Validate based on current mode
+                const isSingleLoafMode = calculationModeToggle.checked;
+                
+                if (isSingleLoafMode) {
+                    isValid &= validateInput('single-loaf-weight', singleLoafWeightInput.value);
+                    isValid &= validateInput('number-of-loaves', numberOfLoavesInput.value);
+                    isValid &= validateInput('inclusions-weight-single', inclusionsWeightSingleInput.value);
+                } else {
+                    isValid &= validateInput('total-weight', totalWeightInput.value);
+                    isValid &= validateInput('inclusions-weight', inclusionsWeightInput.value);
+                }
+
+                // Validate percentages
+                isValid &= validateInput('water-percent', waterPercentInput.value);
+                isValid &= validateInput('salt-percent', saltPercentInput.value);
+                isValid &= validateInput('levain-percent', levainPercentInput.value);
+                isValid &= validateInput('levain-hydration-percent', levainHydrationPercentInput.value);
+                isValid &= validateInput('white-flour-percent', whiteFlourPercentInput.value);
+
+                // Additional business logic validation
+                const totalWeight = isSingleLoafMode ? 
+                    (parseFloat(singleLoafWeightInput.value) || 0) * (parseFloat(numberOfLoavesInput.value) || 1) :
+                    parseFloat(totalWeightInput.value) || 0;
+                const inclusionsWeight = isSingleLoafMode ?
+                    (parseFloat(inclusionsWeightSingleInput.value) || 0) * (parseFloat(numberOfLoavesInput.value) || 1) :
+                    parseFloat(inclusionsWeightInput.value) || 0;
+
+                if (totalWeight <= inclusionsWeight) {
+                    const errorId = isSingleLoafMode ? 'inclusions-weight-single' : 'inclusions-weight';
+                    const errorElement = document.getElementById(errorId + '-error');
+                    const inputElement = document.getElementById(errorId);
+                    
+                    if (errorElement) {
+                        errorElement.textContent = 'Inclusions cannot exceed total dough weight';
+                        errorElement.classList.add('show');
+                    }
+                    if (inputElement) {
+                        inputElement.classList.add('input-error');
+                    }
+                    isValid = false;
+                }
+
+                // Show/hide validation summary
+                const validationSummary = document.getElementById('validation-summary');
+                const validationErrorsList = document.getElementById('validation-errors-list');
+                
+                if (!isValid) {
+                    validationSummary.classList.add('show');
+                    validationErrorsList.innerHTML = '';
+                    
+                    // Collect all error messages
+                    const allErrorElements = document.querySelectorAll('.error-message.show');
+                    allErrorElements.forEach(errorElement => {
+                        if (errorElement.textContent) {
+                            const li = document.createElement('li');
+                            li.textContent = errorElement.textContent;
+                            validationErrorsList.appendChild(li);
+                        }
+                    });
+                } else {
+                    validationSummary.classList.remove('show');
+                }
+
+                return isValid;
+            }
+
             // Function to perform the calculations
             function calculateSourdough() {
+                // Validate all inputs first
+                if (!validateAllInputs()) {
+                    resultsDiv.classList.add('hidden');
+                    return;
+                }
+
                 const isSingleLoafMode = calculationModeToggle.checked;
                 
                 // Get the input values and convert them to numbers
@@ -304,13 +552,6 @@
                 const levainPercent = parseFloat(levainPercentInput.value);
                 const levainHydrationPercent = parseFloat(levainHydrationPercentInput.value);
                 const whiteFlourPercent = parseFloat(whiteFlourPercentInput.value);
-
-                // Basic validation
-                if (isNaN(totalWeight) || totalWeight <= 0 || isNaN(waterPercent) || isNaN(saltPercent) || isNaN(levainPercent) || isNaN(levainHydrationPercent) || totalWeight <= inclusionsWeight || isNaN(whiteFlourPercent) || whiteFlourPercent > 100 || whiteFlourPercent < 0) {
-                    // Hide results if input is invalid
-                    resultsDiv.classList.add('hidden');
-                    return;
-                }
 
                 // Update the other flour percentage
                 otherFloursPercentInput.value = 100 - whiteFlourPercent;
@@ -368,9 +609,22 @@
                 resultsDiv.classList.remove('hidden');
             }
 
-            // Add event listeners for input changes
+            // Add event listeners for input changes with real-time validation
             [totalWeightInput, inclusionsWeightInput, singleLoafWeightInput, numberOfLoavesInput, inclusionsWeightSingleInput, waterPercentInput, saltPercentInput, levainPercentInput, levainHydrationPercentInput, whiteFlourPercentInput].forEach(input => {
-                input.addEventListener('input', calculateSourdough);
+                input.addEventListener('input', (e) => {
+                    // Real-time validation for individual input
+                    const inputId = e.target.id;
+                    validateInput(inputId, e.target.value);
+                    
+                    // Then run full calculation
+                    calculateSourdough();
+                });
+                
+                // Also validate on blur for better UX
+                input.addEventListener('blur', (e) => {
+                    const inputId = e.target.id;
+                    validateInput(inputId, e.target.value);
+                });
             });
 
             // Initial calculation on page load
