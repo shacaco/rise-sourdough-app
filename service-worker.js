@@ -2,7 +2,6 @@
 const CACHE_NAME = 'rise-sourdough-calculator-v2';
 // List of files to cache
 const urlsToCache = [
-  './',
   './index.html',
   './manifest.json',
   './icons/icon-192x192.png',

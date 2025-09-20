@@ -723,7 +723,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swUrl = new URL('./service-worker.js', window.location.href);
-                navigator.serviceWorker.register(swUrl.pathname).then(registration => {
+                navigator.serviceWorker.register(swUrl.pathname, { scope: './' }).then(registration => {
                     console.log('ServiceWorker registration successful with scope: ', registration.scope);
                 }, err => {
                     console.log('ServiceWorker registration failed: ', err);
