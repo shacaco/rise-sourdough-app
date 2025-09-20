@@ -1,1 +1,25 @@
-{"short_name": "Rise","name": "Rise - Sourdough Calculator","description": "A simple calculator for sourdough bread recipes.","icons": [{"src": "https://www.google.com/search?q=https://placehold.co/192x192/f3e9dc/4a2c0a%3Ftext%3DRise","type": "image/png","sizes": "192x192"},{"src": "https://www.google.com/search?q=https://placehold.co/512x512/f3e9dc/4a2c0a%3Ftext%3DRise","type": "image/png","sizes": "512x512"}],"start_url": ".","display": "standalone","theme_color": "#ffffff","background_color": "#f9fafb"}
+{
+  "short_name": "Rise",
+  "name": "Rise - Professional Sourdough Calculator",
+  "description": "Professional sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking.",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#f9fafb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["food", "utilities", "productivity"]
+}

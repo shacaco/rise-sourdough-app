@@ -3,17 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rise - Sourdough Calculator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Primary Meta Tags -->
+    <title>Rise - Professional Sourdough Calculator | Perfect Bread Recipes</title>
+    <meta name="title" content="Rise - Professional Sourdough Calculator | Perfect Bread Recipes">
+    <meta name="description" content="Professional sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking. Includes levain hydration, flour mixing, and inclusions. Free online tool for home bakers and professionals.">
+    <meta name="keywords" content="sourdough calculator, bread calculator, baker's percentages, sourdough recipe, bread recipe calculator, levain calculator, hydration calculator, flour calculator, bread making tool, sourdough bread, artisan bread, bread baking">
+    <meta name="author" content="Rise Sourdough Calculator">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rise-sourdough.com/">
+    <meta property="og:title" content="Rise - Professional Sourdough Calculator | Perfect Bread Recipes">
+    <meta property="og:description" content="Professional sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking. Free online tool for home bakers and professionals.">
+    <meta property="og:image" content="https://rise-sourdough.com/og-image.jpg">
+    <meta property="og:site_name" content="Rise Sourdough Calculator">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://rise-sourdough.com/">
+    <meta property="twitter:title" content="Rise - Professional Sourdough Calculator | Perfect Bread Recipes">
+    <meta property="twitter:description" content="Professional sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking. Free online tool for home bakers and professionals.">
+    <meta property="twitter:image" content="https://rise-sourdough.com/twitter-image.jpg">
+    <meta property="twitter:creator" content="@rise_sourdough">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#ffffff">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://rise-sourdough.com/">
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
     
     <!-- PWA Manifest Link -->
     <link rel="manifest" href="manifest.json">
-
-    <!-- Theme color for browser UI -->
-    <meta name="theme-color" content="#ffffff"/>
     
     <!-- Icons for PWA -->
-    <link rel="apple-touch-icon" href="https://placehold.co/180x180/f3e9dc/4a2c0a?text=Rise">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#4a2c0a">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Rise - Sourdough Calculator",
+        "description": "Professional sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking.",
+        "url": "https://rise-sourdough.com/",
+        "applicationCategory": "FoodApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "Rise Sourdough Calculator"
+        },
+        "featureList": [
+            "Baker's percentage calculations",
+            "Total batch weight calculations",
+            "Per-unit weight calculations",
+            "Levain hydration calculator",
+            "Flour mixing ratios",
+            "Inclusions weight calculator",
+            "Real-time validation",
+            "Professional bread recipe tool"
+        ],
+        "screenshot": "https://rise-sourdough.com/screenshot.jpg",
+        "softwareVersion": "1.0",
+        "datePublished": "2024-01-01",
+        "dateModified": "2024-01-01",
+        "inLanguage": "en-US",
+        "isAccessibleForFree": true,
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "softwareHelp": "https://rise-sourdough.com/help"
+    }
+    </script>
+    
+    <!-- External Resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
         body {
@@ -83,24 +163,26 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="container mx-auto p-6 bg-white rounded-2xl shadow-xl">
-        <!-- Title and Introduction -->
-        <div class="text-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Rise</h1>
-            <p class="text-gray-500 mt-2">Calculate ingredient weights by total batch weight or per-unit weight and quantity.</p>
-        </div>
+    <main class="container mx-auto p-6 bg-white rounded-2xl shadow-xl" role="main" aria-label="Sourdough Calculator">
+        <!-- Header Section -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Rise - Professional Sourdough Calculator</h1>
+            <p class="text-gray-500 mt-2">Calculate ingredient weights by total batch weight or per-unit weight and quantity. Perfect for home bakers and professionals.</p>
+        </header>
 
         <!-- Calculation Mode Toggle -->
-        <div class="mb-6">
+        <section class="mb-6" aria-label="Calculation Mode Selection">
+            <h2 class="sr-only">Choose Calculation Mode</h2>
             <div class="flex items-center justify-center space-x-4">
                 <span class="text-sm font-medium text-gray-700">Total Batch</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="calculation-mode-toggle" class="sr-only peer">
+                <label class="relative inline-flex items-center cursor-pointer" for="calculation-mode-toggle">
+                    <input type="checkbox" id="calculation-mode-toggle" class="sr-only peer" aria-describedby="mode-description">
                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                     <span class="ml-3 text-sm font-medium text-gray-700">Per Unit</span>
                 </label>
             </div>
-        </div>
+            <p id="mode-description" class="text-xs text-gray-500 text-center mt-2">Toggle between calculating for total batch weight or individual unit quantities</p>
+        </section>
 
         <!-- Validation Summary -->
         <div id="validation-summary" class="validation-summary">
@@ -109,7 +191,7 @@
         </div>
 
         <!-- Input Section -->
-        <div class="space-y-4">
+        <form class="space-y-4" role="form" aria-label="Sourdough Recipe Calculator">
             <!-- Total Weight Mode Inputs -->
             <div id="total-weight-mode" class="space-y-4">
                 <!-- Total Dough Weight Input -->
@@ -222,7 +304,8 @@
 
             <!-- Flour Mix Percentages Section -->
             <hr class="border-gray-300 mt-4 mb-2">
-            <h3 class="text-lg font-bold text-gray-800">Flour Mix</h3>
+            <section aria-label="Flour Mix Configuration">
+                <h3 class="text-lg font-bold text-gray-800">Flour Mix</h3>
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label for="white-flour-percent" class="block text-sm font-medium text-gray-700">White Flour (%)</label>
@@ -244,10 +327,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+            </section>
+        </form>
 
         <!-- Results Section -->
-        <div id="results" class="mt-6 p-6 bg-gray-50 rounded-lg hidden">
+        <section id="results" class="mt-6 p-6 bg-gray-50 rounded-lg hidden" aria-label="Calculated Recipe Results">
             <h2 class="text-lg font-bold text-gray-900 mb-4">Ingredients</h2>
             <ul class="space-y-2">
                 <li class="flex justify-between items-center text-gray-900">
@@ -292,8 +376,8 @@
                     <span id="levain-water-result" class="font-semibold text-gray-900"></span>
                 </li>
             </ul>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
