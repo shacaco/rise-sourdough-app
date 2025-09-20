@@ -1,7 +1,7 @@
 {
   "short_name": "Rise",
-  "name": "Rise - Professional Sourdough Calculator",
-  "description": "Professional sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking.",
+  "name": "Rise - Sourdough Calculator",
+  "description": "Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking.",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",

@@ -1,0 +1,7 @@
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bread loaf shape in monochrome -->
+  <path d="M 5 6 Q 5 5 6 5 L 10 5 Q 11 5 11 6 L 11 10 Q 11 11 10 11 L 6 11 Q 5 11 5 10 Z" fill="#000000"/>
+  
+  <!-- Letter R -->
+  <text x="8" y="9" font-family="Arial, sans-serif" font-size="6" font-weight="bold" text-anchor="middle" fill="#ffffff">R</text>
+</svg>

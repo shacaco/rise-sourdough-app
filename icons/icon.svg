@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#f3e9dc" stroke="#4a2c0a" stroke-width="8"/>
+  
+  <!-- Bread loaf shape -->
+  <path d="M 180 200 Q 180 160 220 160 L 292 160 Q 332 160 332 200 L 332 320 Q 332 360 292 360 L 220 360 Q 180 360 180 320 Z" fill="#d4af8c" stroke="#4a2c0a" stroke-width="4"/>
+  
+  <!-- Bread texture lines -->
+  <path d="M 200 180 Q 240 170 280 180" stroke="#4a2c0a" stroke-width="3" fill="none"/>
+  <path d="M 200 220 Q 240 210 280 220" stroke="#4a2c0a" stroke-width="3" fill="none"/>
+  <path d="M 200 260 Q 240 250 280 260" stroke="#4a2c0a" stroke-width="3" fill="none"/>
+  <path d="M 200 300 Q 240 290 280 300" stroke="#4a2c0a" stroke-width="3" fill="none"/>
+  
+  <!-- Letter R -->
+  <text x="256" y="320" font-family="Arial, sans-serif" font-size="120" font-weight="bold" text-anchor="middle" fill="#4a2c0a">R</text>
+</svg>

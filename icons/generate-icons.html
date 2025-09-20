@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Icons</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .icon-container { margin: 20px 0; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Icon Generator for Rise Sourdough Calculator</h1>
+    <p>Click the buttons to generate and download icons in different sizes.</p>
+    
+    <div class="icon-container">
+        <h3>16x16 Favicon</h3>
+        <canvas id="icon16" width="16" height="16"></canvas>
+        <button onclick="generateIcon(16, 'favicon-16x16.png')">Generate 16x16</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>32x32 Favicon</h3>
+        <canvas id="icon32" width="32" height="32"></canvas>
+        <button onclick="generateIcon(32, 'favicon-32x32.png')">Generate 32x32</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>180x180 Apple Touch Icon</h3>
+        <canvas id="icon180" width="180" height="180"></canvas>
+        <button onclick="generateIcon(180, 'apple-touch-icon.png')">Generate 180x180</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>192x192 PWA Icon</h3>
+        <canvas id="icon192" width="192" height="192"></canvas>
+        <button onclick="generateIcon(192, 'icon-192x192.png')">Generate 192x192</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>512x512 PWA Icon</h3>
+        <canvas id="icon512" width="512" height="512"></canvas>
+        <button onclick="generateIcon(512, 'icon-512x512.png')">Generate 512x512</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>150x150 Windows Tile</h3>
+        <canvas id="icon150" width="150" height="150"></canvas>
+        <button onclick="generateIcon(150, 'mstile-150x150.png')">Generate 150x150</button>
+    </div>
+    
+    <script>
+        function generateIcon(size, filename) {
+            const canvas = document.getElementById(`icon${size}`);
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Scale factors
+            const scale = size / 32;
+            const center = size / 2;
+            const radius = 15 * scale;
+            
+            // Draw background circle
+            ctx.fillStyle = '#f3e9dc';
+            ctx.strokeStyle = '#4a2c0a';
+            ctx.lineWidth = Math.max(1, scale);
+            ctx.beginPath();
+            ctx.arc(center, center, radius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Draw bread loaf
+            ctx.fillStyle = '#d4af8c';
+            ctx.strokeStyle = '#4a2c0a';
+            ctx.lineWidth = Math.max(0.5, scale * 0.5);
+            
+            const loafWidth = 8 * scale;
+            const loafHeight = 10 * scale;
+            const loafX = center - loafWidth / 2;
+            const loafY = center - loafHeight / 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(loafX, loafY + 2 * scale);
+            ctx.quadraticCurveTo(loafX, loafY, loafX + 2 * scale, loafY);
+            ctx.lineTo(loafX + loafWidth - 2 * scale, loafY);
+            ctx.quadraticCurveTo(loafX + loafWidth, loafY, loafX + loafWidth, loafY + 2 * scale);
+            ctx.lineTo(loafX + loafWidth, loafY + loafHeight - 2 * scale);
+            ctx.quadraticCurveTo(loafX + loafWidth, loafY + loafHeight, loafX + loafWidth - 2 * scale, loafY + loafHeight);
+            ctx.lineTo(loafX + 2 * scale, loafY + loafHeight);
+            ctx.quadraticCurveTo(loafX, loafY + loafHeight, loafX, loafY + loafHeight - 2 * scale);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Draw texture lines
+            ctx.strokeStyle = '#4a2c0a';
+            ctx.lineWidth = Math.max(0.3, scale * 0.3);
+            
+            for (let i = 1; i <= 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(loafX + 1 * scale, loafY + (1 + i) * scale);
+                ctx.quadraticCurveTo(center, loafY + (1 + i - 0.5) * scale, loafX + loafWidth - 1 * scale, loafY + (1 + i) * scale);
+                ctx.stroke();
+            }
+            
+            // Draw letter R
+            ctx.fillStyle = '#4a2c0a';
+            ctx.font = `bold ${8 * scale}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('R', center, center + 2 * scale);
+            
+            // Download the icon
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = filename;
+            link.click();
+        }
+        
+        // Generate all icons on page load
+        window.onload = function() {
+            setTimeout(() => {
+                generateIcon(16, 'favicon-16x16.png');
+                generateIcon(32, 'favicon-32x32.png');
+                generateIcon(180, 'apple-touch-icon.png');
+                generateIcon(192, 'icon-192x192.png');
+                generateIcon(512, 'icon-512x512.png');
+                generateIcon(150, 'mstile-150x150.png');
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

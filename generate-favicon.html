@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Favicon</title>
+</head>
+<body>
+    <h1>Favicon Generator</h1>
+    <p>Use this page to generate favicon.ico from the SVG icon.</p>
+    
+    <!-- Canvas to render the icon -->
+    <canvas id="faviconCanvas" width="32" height="32" style="border: 1px solid #ccc;"></canvas>
+    
+    <br><br>
+    <button onclick="generateFavicon()">Generate Favicon</button>
+    <a id="downloadLink" style="display: none;">Download Favicon</a>
+    
+    <script>
+        function generateFavicon() {
+            const canvas = document.getElementById('faviconCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, 32, 32);
+            
+            // Draw background circle
+            ctx.fillStyle = '#f3e9dc';
+            ctx.strokeStyle = '#4a2c0a';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(16, 16, 15, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Draw bread loaf
+            ctx.fillStyle = '#d4af8c';
+            ctx.strokeStyle = '#4a2c0a';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(11, 12);
+            ctx.quadraticCurveTo(11, 10, 13, 10);
+            ctx.lineTo(19, 10);
+            ctx.quadraticCurveTo(21, 10, 21, 12);
+            ctx.lineTo(21, 20);
+            ctx.quadraticCurveTo(21, 22, 19, 22);
+            ctx.lineTo(13, 22);
+            ctx.quadraticCurveTo(11, 22, 11, 20);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Draw texture lines
+            ctx.strokeStyle = '#4a2c0a';
+            ctx.lineWidth = 0.3;
+            
+            ctx.beginPath();
+            ctx.moveTo(12, 11);
+            ctx.quadraticCurveTo(15, 10.5, 18, 11);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(12, 14);
+            ctx.quadraticCurveTo(15, 13.5, 18, 14);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(12, 17);
+            ctx.quadraticCurveTo(15, 16.5, 18, 17);
+            ctx.stroke();
+            
+            // Draw letter R
+            ctx.fillStyle = '#4a2c0a';
+            ctx.font = 'bold 8px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('R', 16, 20);
+            
+            // Convert to favicon
+            const link = document.getElementById('downloadLink');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'favicon.png';
+            link.style.display = 'inline';
+            link.textContent = 'Download PNG Favicon';
+        }
+        
+        // Generate on page load
+        window.onload = generateFavicon;
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Favicon Generator</title>
+</head>
+<body>
+    <h1>Generate favicon.ico</h1>
+    <canvas id="canvas" width="32" height="32"></canvas>
+    <br>
+    <button onclick="generateFavicon()">Generate favicon.ico</button>
+    
+    <script>
+        function generateFavicon() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Draw icon
+            ctx.fillStyle = '#f3e9dc';
+            ctx.fillRect(0, 0, 32, 32);
+            
+            ctx.fillStyle = '#d4af8c';
+            ctx.fillRect(8, 8, 16, 16);
+            
+            ctx.fillStyle = '#4a2c0a';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('R', 16, 22);
+            
+            // Download as favicon
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'favicon.ico';
+            link.click();
+        }
+        
+        generateFavicon();
+    </script>
+</body>
+</html>
