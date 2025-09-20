@@ -4,22 +4,34 @@
   "description": "Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking.",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "icons/icon-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "icons/icon-512x512.png",
       "type": "image/png",
       "sizes": "512x512"
+    },
+    {
+      "src": "icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "theme_color": "#ffffff",
   "background_color": "#f9fafb",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "./",
   "lang": "en-US",
   "categories": ["food", "utilities", "productivity"]
 }
