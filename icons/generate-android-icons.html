@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Android Icons</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .icon-container { margin: 20px 0; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Generate Additional Android Icons</h1>
+    <p>Click the buttons to generate additional icon sizes required for Android PWA installation.</p>
+    
+    <div class="icon-container">
+        <h3>144x144 Android Icon</h3>
+        <canvas id="icon144" width="144" height="144"></canvas>
+        <button onclick="generateIcon(144, 'icon-144x144.png')">Generate 144x144</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>384x384 Android Icon</h3>
+        <canvas id="icon384" width="384" height="384"></canvas>
+        <button onclick="generateIcon(384, 'icon-384x384.png')">Generate 384x384</button>
+    </div>
+    
+    <script>
+        function generateIcon(size, filename) {
+            const canvas = document.getElementById(`icon${size}`);
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Scale factors
+            const scale = size / 32;
+            const center = size / 2;
+            const radius = 15 * scale;
+            
+            // Draw background circle
+            ctx.fillStyle = '#f3e9dc';
+            ctx.strokeStyle = '#4a2c0a';
+            ctx.lineWidth = Math.max(1, scale);
+            ctx.beginPath();
+            ctx.arc(center, center, radius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Draw bread loaf
+            ctx.fillStyle = '#d4af8c';
+            ctx.strokeStyle = '#4a2c0a';
+            ctx.lineWidth = Math.max(0.5, scale * 0.5);
+            
+            const loafWidth = 8 * scale;
+            const loafHeight = 10 * scale;
+            const loafX = center - loafWidth / 2;
+            const loafY = center - loafHeight / 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(loafX, loafY + 2 * scale);
+            ctx.quadraticCurveTo(loafX, loafY, loafX + 2 * scale, loafY);
+            ctx.lineTo(loafX + loafWidth - 2 * scale, loafY);
+            ctx.quadraticCurveTo(loafX + loafWidth, loafY, loafX + loafWidth, loafY + 2 * scale);
+            ctx.lineTo(loafX + loafWidth, loafY + loafHeight - 2 * scale);
+            ctx.quadraticCurveTo(loafX + loafWidth, loafY + loafHeight, loafX + loafWidth - 2 * scale, loafY + loafHeight);
+            ctx.lineTo(loafX + 2 * scale, loafY + loafHeight);
+            ctx.quadraticCurveTo(loafX, loafY + loafHeight, loafX, loafY + loafHeight - 2 * scale);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Draw texture lines
+            ctx.strokeStyle = '#4a2c0a';
+            ctx.lineWidth = Math.max(0.3, scale * 0.3);
+            
+            for (let i = 1; i <= 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(loafX + 1 * scale, loafY + (1 + i) * scale);
+                ctx.quadraticCurveTo(center, loafY + (1 + i - 0.5) * scale, loafX + loafWidth - 1 * scale, loafY + (1 + i) * scale);
+                ctx.stroke();
+            }
+            
+            // Draw letter R
+            ctx.fillStyle = '#4a2c0a';
+            ctx.font = `bold ${8 * scale}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('R', center, center + 2 * scale);
+            
+            // Download the icon
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = filename;
+            link.click();
+        }
+        
+        // Generate all icons on page load
+        window.onload = function() {
+            setTimeout(() => {
+                generateIcon(144, 'icon-144x144.png');
+                generateIcon(384, 'icon-384x384.png');
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
