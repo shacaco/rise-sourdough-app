@@ -1,6 +1,7 @@
 {
   "short_name": "Rise",
   "name": "Rise - Sourdough Calculator",
+  "id": "/rise-sourdough-app/",
   "description": "Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking.",
   "icons": [
     {
@@ -26,12 +27,12 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "./",
+  "start_url": "/rise-sourdough-app/",
   "display": "standalone",
   "theme_color": "#ffffff",
   "background_color": "#f9fafb",
   "orientation": "portrait-primary",
-  "scope": "./",
+  "scope": "/rise-sourdough-app/",
   "lang": "en-US",
   "categories": ["food", "utilities", "productivity"]
 }

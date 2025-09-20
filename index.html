@@ -16,7 +16,7 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://rise-sourdough.com/">
+    <meta property="og:url" content="https://shacaco.github.io/rise-sourdough-app/">
     <meta property="og:title" content="Rise - Sourdough Calculator | Perfect Bread Recipes">
     <meta property="og:description" content="Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking. Free online tool for home bakers.">
     <meta property="og:image" content="https://rise-sourdough.com/og-image.jpg">
@@ -25,7 +25,7 @@
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://rise-sourdough.com/">
+    <meta property="twitter:url" content="https://shacaco.github.io/rise-sourdough-app/">
     <meta property="twitter:title" content="Rise - Sourdough Calculator | Perfect Bread Recipes">
     <meta property="twitter:description" content="Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking. Free online tool for home bakers.">
     <meta property="twitter:image" content="https://rise-sourdough.com/twitter-image.jpg">
@@ -34,10 +34,10 @@
     <!-- Additional SEO Meta Tags -->
     <meta name="theme-color" content="#ffffff">
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-config" content="/browserconfig.xml">
+    <meta name="msapplication-config" content="./browserconfig.xml">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://rise-sourdough.com/">
+    <link rel="canonical" href="https://shacaco.github.io/rise-sourdough-app/">
     
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
@@ -722,8 +722,8 @@
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                const swUrl = new URL('./service-worker.js', window.location.href);
-                navigator.serviceWorker.register(swUrl.pathname, { scope: './' }).then(registration => {
+                const swUrl = '/rise-sourdough-app/service-worker.js';
+                navigator.serviceWorker.register(swUrl, { scope: '/rise-sourdough-app/' }).then(registration => {
                     console.log('ServiceWorker registration successful with scope: ', registration.scope);
                 }, err => {
                     console.log('ServiceWorker registration failed: ', err);
