@@ -51,3 +51,4 @@ After generating the icons:
 1. Open `index.html` in a browser
 2. Check that the favicon appears in the browser tab
 3. Test PWA installation to verify app icons work correctly
+
