@@ -188,6 +188,19 @@
             <p id="mode-description" class="text-xs text-gray-500 text-center mt-2">Toggle between calculating for total batch weight or individual unit quantities</p>
         </section>
 
+        <!-- Keep Screen On Toggle -->
+        <section id="wake-lock-section" class="mb-6 hidden" aria-label="Keep Screen Awake">
+            <h2 class="sr-only">Keep Screen On</h2>
+            <div class="flex items-center justify-center space-x-3">
+                <label class="relative inline-flex items-center cursor-pointer" for="wake-lock-toggle">
+                    <input type="checkbox" id="wake-lock-toggle" class="sr-only peer" aria-describedby="wake-lock-description">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    <span class="ml-3 text-sm font-medium text-gray-700">Keep screen on</span>
+                </label>
+            </div>
+            <p id="wake-lock-description" class="text-xs text-gray-500 text-center mt-2">Prevents your device from dimming or locking while you bake</p>
+        </section>
+
         <!-- Validation Summary -->
         <div id="validation-summary" class="validation-summary">
             <h4>Please fix the following issues:</h4>
@@ -717,6 +730,62 @@
 
             // Initial calculation on page load
             calculateSourdough();
+
+            // --- Keep Screen On (Wake Lock API) ---
+            const wakeLockSection = document.getElementById('wake-lock-section');
+            const wakeLockToggle = document.getElementById('wake-lock-toggle');
+
+            // Only expose the feature when the browser supports the Wake Lock API.
+            if ('wakeLock' in navigator) {
+                wakeLockSection.classList.remove('hidden');
+
+                let wakeLock = null;
+
+                async function requestWakeLock() {
+                    try {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        // The lock can be released by the system (e.g. tab hidden); keep the
+                        // toggle in sync if that happens while it's still switched on.
+                        wakeLock.addEventListener('release', () => {
+                            wakeLock = null;
+                            if (!document.hidden) {
+                                wakeLockToggle.checked = false;
+                            }
+                        });
+                    } catch (err) {
+                        console.log(`Wake Lock request failed: ${err.name}, ${err.message}`);
+                        wakeLockToggle.checked = false;
+                    }
+                }
+
+                async function releaseWakeLock() {
+                    if (wakeLock) {
+                        const lock = wakeLock;
+                        wakeLock = null;
+                        try {
+                            await lock.release();
+                        } catch (err) {
+                            console.log(`Wake Lock release failed: ${err.name}, ${err.message}`);
+                        }
+                    }
+                }
+
+                wakeLockToggle.addEventListener('change', () => {
+                    if (wakeLockToggle.checked) {
+                        requestWakeLock();
+                    } else {
+                        releaseWakeLock();
+                    }
+                });
+
+                // The OS releases the lock when the page is hidden; re-acquire it when the
+                // page becomes visible again and the toggle is still on.
+                document.addEventListener('visibilitychange', () => {
+                    if (!document.hidden && wakeLockToggle.checked && wakeLock === null) {
+                        requestWakeLock();
+                    }
+                });
+            }
         });
 
         // PWA Service Worker Registration
