@@ -186,6 +186,31 @@
             <p class="text-gray-500 mt-2">Calculate ingredient weights by total batch weight or per-unit weight and quantity. Perfect for home bakers.</p>
         </header>
 
+        <!-- Saved Recipes -->
+        <section class="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm" aria-label="Saved Recipes">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-bold text-gray-800">My Recipes</h2>
+                <span id="recipe-dirty" class="hidden text-xs font-medium text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">Unsaved changes</span>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label for="recipe-select" class="sr-only">Saved recipes</label>
+                    <select id="recipe-select" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-10 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        <option value="">-- Select a recipe --</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="recipe-name" class="sr-only">Recipe name</label>
+                    <input type="text" id="recipe-name" placeholder="Recipe name" maxlength="60" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-4 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" id="recipe-save" class="flex-1 min-w-[5rem] rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out">Save</button>
+                    <button type="button" id="recipe-new" class="flex-1 min-w-[5rem] rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out">New</button>
+                    <button type="button" id="recipe-delete" class="flex-1 min-w-[5rem] rounded-md bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm border border-gray-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out">Delete</button>
+                </div>
+            </div>
+        </section>
+
         <!-- Calculation Mode Toggle -->
         <section class="mb-6" aria-label="Calculation Mode Selection">
             <h2 class="sr-only">Choose Calculation Mode</h2>
@@ -429,7 +454,8 @@
 
             // --- Local Storage Persistence ---
             // Single versioned key so we can invalidate cleanly if field semantics change.
-            const STORAGE_KEY = 'rise-recipe-v1';
+            const STORAGE_KEY = 'rise-recipe-v1';      // working state (live inputs)
+            const RECIPES_KEY = 'rise-recipes-v1';     // named recipe library
             const MODE_TOGGLE_ID = 'calculation-mode-toggle';
             // Recipe inputs we persist. Excludes the derived `other-flours-percent`
             // and the transient `wake-lock-toggle`.
@@ -440,14 +466,54 @@
                 'levain-hydration-percent', 'white-flour-percent'
             ];
 
+            // Saved Recipes UI elements.
+            const recipeSelect = document.getElementById('recipe-select');
+            const recipeNameInput = document.getElementById('recipe-name');
+            const recipeSaveBtn = document.getElementById('recipe-save');
+            const recipeNewBtn = document.getElementById('recipe-new');
+            const recipeDeleteBtn = document.getElementById('recipe-delete');
+            const recipeDirtyBadge = document.getElementById('recipe-dirty');
+
+            // Name of the currently loaded named recipe (null = unsaved draft).
+            let activeRecipeName = null;
+
+            // Build a plain object of the current recipe (field values + mode).
+            function collectState() {
+                const state = {};
+                PERSISTED_IDS.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) state[id] = el.value;
+                });
+                state[MODE_TOGGLE_ID] = calculationModeToggle.checked;
+                return state;
+            }
+
+            // Apply a recipe object to the inputs, skipping out-of-range/garbage values.
+            function applyState(state) {
+                if (!state || typeof state !== 'object') return;
+                PERSISTED_IDS.forEach(id => {
+                    if (!(id in state)) return;
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    const value = state[id];
+                    const rule = validationRules[id];
+                    // Skip stale/garbage values that fall outside the known bounds so a
+                    // corrupted store can't break the calculation.
+                    if (rule) {
+                        const num = parseFloat(value);
+                        if (isNaN(num) || num < rule.min || num > rule.max) return;
+                    }
+                    el.value = value;
+                });
+                if (typeof state[MODE_TOGGLE_ID] === 'boolean') {
+                    calculationModeToggle.checked = state[MODE_TOGGLE_ID];
+                }
+            }
+
             function saveState() {
                 try {
-                    const state = {};
-                    PERSISTED_IDS.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) state[id] = el.value;
-                    });
-                    state[MODE_TOGGLE_ID] = calculationModeToggle.checked;
+                    const state = collectState();
+                    state.activeRecipeName = activeRecipeName;
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
                 } catch (err) {
                     // Private mode / quota / disabled storage: persistence is best-effort.
@@ -467,24 +533,143 @@
                 }
                 if (!state || typeof state !== 'object') return;
 
-                PERSISTED_IDS.forEach(id => {
-                    if (!(id in state)) return;
-                    const el = document.getElementById(id);
-                    if (!el) return;
-                    const value = state[id];
-                    const rule = validationRules[id];
-                    // Skip stale/garbage values that fall outside the known bounds so a
-                    // corrupted store can't break the calculation.
-                    if (rule) {
-                        const num = parseFloat(value);
-                        if (isNaN(num) || num < rule.min || num > rule.max) return;
-                    }
-                    el.value = value;
-                });
+                applyState(state);
 
-                if (typeof state[MODE_TOGGLE_ID] === 'boolean') {
-                    calculationModeToggle.checked = state[MODE_TOGGLE_ID];
+                if (typeof state.activeRecipeName === 'string') {
+                    activeRecipeName = state.activeRecipeName;
+                    recipeNameInput.value = state.activeRecipeName;
                 }
+            }
+
+            // --- Named Recipe Library ---
+            function getRecipes() {
+                try {
+                    const raw = localStorage.getItem(RECIPES_KEY);
+                    if (!raw) return {};
+                    const parsed = JSON.parse(raw);
+                    return (parsed && typeof parsed === 'object') ? parsed : {};
+                } catch (err) {
+                    console.log(`Could not read recipes: ${err.name}, ${err.message}`);
+                    return {};
+                }
+            }
+
+            function setRecipes(map) {
+                try {
+                    localStorage.setItem(RECIPES_KEY, JSON.stringify(map));
+                } catch (err) {
+                    console.log(`Could not save recipes: ${err.name}, ${err.message}`);
+                }
+            }
+
+            // Stable signature over the persisted fields for dirty comparison.
+            function recipeSignature(state) {
+                if (!state) return '';
+                const ordered = {};
+                PERSISTED_IDS.forEach(id => { ordered[id] = String(state[id] ?? ''); });
+                ordered[MODE_TOGGLE_ID] = !!state[MODE_TOGGLE_ID];
+                return JSON.stringify(ordered);
+            }
+
+            function refreshRecipeSelect() {
+                const recipes = getRecipes();
+                const names = Object.keys(recipes).sort((a, b) => a.localeCompare(b));
+                recipeSelect.innerHTML = '<option value="">-- Select a recipe --</option>';
+                names.forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    recipeSelect.appendChild(opt);
+                });
+                recipeSelect.value = (activeRecipeName && recipes[activeRecipeName]) ? activeRecipeName : '';
+                recipeDeleteBtn.disabled = !recipeSelect.value;
+            }
+
+            // Show the badge when the live inputs differ from the active saved recipe.
+            // Also keep the Save button disabled when there is no name to save under.
+            function updateDirtyIndicator() {
+                recipeSaveBtn.disabled = recipeNameInput.value.trim() === '';
+
+                let dirty = false;
+                if (activeRecipeName) {
+                    const recipes = getRecipes();
+                    const saved = recipes[activeRecipeName];
+                    if (saved) {
+                        dirty = recipeSignature(collectState()) !== recipeSignature(saved);
+                    }
+                }
+                recipeDirtyBadge.classList.toggle('hidden', !dirty);
+            }
+
+            function isDirty() {
+                return !recipeDirtyBadge.classList.contains('hidden');
+            }
+
+            function saveActiveRecipe() {
+                const name = recipeNameInput.value.trim();
+                if (name === '') return;
+                const recipes = getRecipes();
+                if (Object.prototype.hasOwnProperty.call(recipes, name) && name !== activeRecipeName) {
+                    if (!confirm(`A recipe named "${name}" already exists. Overwrite it?`)) return;
+                }
+                recipes[name] = collectState();
+                setRecipes(recipes);
+                activeRecipeName = name;
+                saveState();
+                refreshRecipeSelect();
+                updateDirtyIndicator();
+            }
+
+            function loadRecipe(name) {
+                const recipes = getRecipes();
+                const recipe = recipes[name];
+                if (!recipe) return;
+                if (isDirty() && !confirm('Discard unsaved changes and load the selected recipe?')) {
+                    recipeSelect.value = activeRecipeName || '';
+                    return;
+                }
+                applyState(recipe);
+                activeRecipeName = name;
+                recipeNameInput.value = name;
+                projectToPerUnit();
+                toggleCalculationMode();
+                calculateSourdough();
+                saveState();
+                refreshRecipeSelect();
+                updateDirtyIndicator();
+            }
+
+            function deleteActiveRecipe() {
+                const name = recipeSelect.value || activeRecipeName;
+                if (!name) return;
+                if (!confirm(`Delete the recipe "${name}"? This cannot be undone.`)) return;
+                const recipes = getRecipes();
+                delete recipes[name];
+                setRecipes(recipes);
+                if (activeRecipeName === name) {
+                    activeRecipeName = null;
+                    recipeNameInput.value = '';
+                }
+                saveState();
+                refreshRecipeSelect();
+                updateDirtyIndicator();
+            }
+
+            function newRecipe() {
+                if (isDirty() && !confirm('Discard unsaved changes and start a new recipe?')) return;
+                PERSISTED_IDS.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = el.defaultValue;
+                });
+                calculationModeToggle.checked = false;
+                activeRecipeName = null;
+                recipeNameInput.value = '';
+                projectToPerUnit();
+                toggleCalculationMode();
+                calculateSourdough();
+                saveState();
+                refreshRecipeSelect();
+                updateDirtyIndicator();
             }
 
             // --- Recipe View Synchronization ---
@@ -530,12 +715,22 @@
                 // Recalculate when switching modes
                 calculateSourdough();
 
-                // Persist the selected mode.
+                // Persist the selected mode and refresh the unsaved-changes badge.
                 saveState();
+                updateDirtyIndicator();
             }
 
             // Add event listener for toggle
             calculationModeToggle.addEventListener('change', toggleCalculationMode);
+
+            // Saved Recipes control wiring.
+            recipeSaveBtn.addEventListener('click', saveActiveRecipe);
+            recipeNewBtn.addEventListener('click', newRecipe);
+            recipeDeleteBtn.addEventListener('click', deleteActiveRecipe);
+            recipeSelect.addEventListener('change', () => {
+                if (recipeSelect.value) loadRecipe(recipeSelect.value);
+            });
+            recipeNameInput.addEventListener('input', updateDirtyIndicator);
 
             // Validation rules and messages
             const validationRules = {
@@ -803,8 +998,9 @@
                     // Then run full calculation
                     calculateSourdough();
 
-                    // Persist the latest values.
+                    // Persist the latest values and refresh the unsaved-changes badge.
                     saveState();
+                    updateDirtyIndicator();
                 });
                 
                 // Also validate on blur for better UX
@@ -823,6 +1019,10 @@
 
             // Initial calculation on page load
             calculateSourdough();
+
+            // Populate the saved-recipe dropdown and sync the unsaved-changes badge.
+            refreshRecipeSelect();
+            updateDirtyIndicator();
 
             // --- Keep Screen On (Wake Lock API) ---
             const wakeLockSection = document.getElementById('wake-lock-section');
