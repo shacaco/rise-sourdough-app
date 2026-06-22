@@ -166,6 +166,18 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
+    <!-- Keep Screen On Toggle (global, top of screen) -->
+    <div id="wake-lock-section" class="fixed top-0 inset-x-0 z-50 hidden bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm">
+        <div class="max-w-3xl mx-auto px-4 py-2 flex items-center justify-end">
+            <label class="relative inline-flex items-center cursor-pointer" for="wake-lock-toggle" title="Prevents your device from dimming or locking while you bake">
+                <span class="mr-3 text-sm font-medium text-gray-700">Keep screen on</span>
+                <input type="checkbox" id="wake-lock-toggle" class="sr-only peer" aria-describedby="wake-lock-description">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+            </label>
+        </div>
+        <span id="wake-lock-description" class="sr-only">Prevents your device from dimming or locking while you bake</span>
+    </div>
+
     <main class="container mx-auto p-6 bg-white rounded-2xl shadow-xl" role="main" aria-label="Sourdough Calculator">
         <!-- Header Section -->
         <header class="text-center mb-6">
@@ -186,19 +198,6 @@
                 </label>
             </div>
             <p id="mode-description" class="text-xs text-gray-500 text-center mt-2">Toggle between calculating for total batch weight or individual unit quantities</p>
-        </section>
-
-        <!-- Keep Screen On Toggle -->
-        <section id="wake-lock-section" class="mb-6 hidden" aria-label="Keep Screen Awake">
-            <h2 class="sr-only">Keep Screen On</h2>
-            <div class="flex items-center justify-center space-x-3">
-                <label class="relative inline-flex items-center cursor-pointer" for="wake-lock-toggle">
-                    <input type="checkbox" id="wake-lock-toggle" class="sr-only peer" aria-describedby="wake-lock-description">
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                    <span class="ml-3 text-sm font-medium text-gray-700">Keep screen on</span>
-                </label>
-            </div>
-            <p id="wake-lock-description" class="text-xs text-gray-500 text-center mt-2">Prevents your device from dimming or locking while you bake</p>
         </section>
 
         <!-- Validation Summary -->
