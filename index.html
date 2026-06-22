@@ -427,6 +427,66 @@
             const levainFlourResultSpan = document.getElementById('levain-flour-result');
             const levainWaterResultSpan = document.getElementById('levain-water-result');
 
+            // --- Local Storage Persistence ---
+            // Single versioned key so we can invalidate cleanly if field semantics change.
+            const STORAGE_KEY = 'rise-recipe-v1';
+            const MODE_TOGGLE_ID = 'calculation-mode-toggle';
+            // Recipe inputs we persist. Excludes the derived `other-flours-percent`
+            // and the transient `wake-lock-toggle`.
+            const PERSISTED_IDS = [
+                'total-weight', 'inclusions-weight',
+                'single-loaf-weight', 'number-of-loaves', 'inclusions-weight-single',
+                'water-percent', 'salt-percent', 'levain-percent',
+                'levain-hydration-percent', 'white-flour-percent'
+            ];
+
+            function saveState() {
+                try {
+                    const state = {};
+                    PERSISTED_IDS.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) state[id] = el.value;
+                    });
+                    state[MODE_TOGGLE_ID] = calculationModeToggle.checked;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                } catch (err) {
+                    // Private mode / quota / disabled storage: persistence is best-effort.
+                    console.log(`Could not save state: ${err.name}, ${err.message}`);
+                }
+            }
+
+            function loadState() {
+                let state;
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return;
+                    state = JSON.parse(raw);
+                } catch (err) {
+                    console.log(`Could not load state: ${err.name}, ${err.message}`);
+                    return;
+                }
+                if (!state || typeof state !== 'object') return;
+
+                PERSISTED_IDS.forEach(id => {
+                    if (!(id in state)) return;
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    const value = state[id];
+                    const rule = validationRules[id];
+                    // Skip stale/garbage values that fall outside the known bounds so a
+                    // corrupted store can't break the calculation.
+                    if (rule) {
+                        const num = parseFloat(value);
+                        if (isNaN(num) || num < rule.min || num > rule.max) return;
+                    }
+                    el.value = value;
+                });
+
+                if (typeof state[MODE_TOGGLE_ID] === 'boolean') {
+                    calculationModeToggle.checked = state[MODE_TOGGLE_ID];
+                }
+            }
+
             // Toggle between calculation modes
             function toggleCalculationMode() {
                 const isSingleLoafMode = calculationModeToggle.checked;
@@ -441,6 +501,9 @@
                 
                 // Recalculate when switching modes
                 calculateSourdough();
+
+                // Persist the selected mode.
+                saveState();
             }
 
             // Add event listener for toggle
@@ -718,6 +781,9 @@
                     
                     // Then run full calculation
                     calculateSourdough();
+
+                    // Persist the latest values.
+                    saveState();
                 });
                 
                 // Also validate on blur for better UX
@@ -726,6 +792,11 @@
                     validateInput(inputId, e.target.value);
                 });
             });
+
+            // Restore any saved values before the first calculation, then sync the
+            // visible mode panel to the restored toggle state.
+            loadState();
+            toggleCalculationMode();
 
             // Initial calculation on page load
             calculateSourdough();
