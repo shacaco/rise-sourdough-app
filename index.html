@@ -487,6 +487,32 @@
                 }
             }
 
+            // --- Recipe View Synchronization ---
+            // The Batch fields (total-weight, inclusions-weight) are the canonical store.
+            // The Per Unit view is a projection of the canonical recipe given quantity.
+            // Editing either view updates the canonical store so toggling is a pure view flip.
+
+            // Per Unit edit -> canonical. Quantity edits keep unit weight fixed and grow
+            // the total (total = unit x quantity), so this also covers number-of-loaves.
+            function updateCanonicalFromPerUnit() {
+                const n = parseFloat(numberOfLoavesInput.value) || 1;
+                const unitWeight = parseFloat(singleLoafWeightInput.value) || 0;
+                const perUnitInclusions = parseFloat(inclusionsWeightSingleInput.value) || 0;
+                totalWeightInput.value = unitWeight * n;
+                inclusionsWeightInput.value = perUnitInclusions * n;
+            }
+
+            // Canonical -> Per Unit projection. Keeps quantity, derives unit weight.
+            // Displayed per-unit values are rounded to whole grams; the canonical batch
+            // values retain full precision and are what calculateSourdough() reads.
+            function projectToPerUnit() {
+                const n = parseFloat(numberOfLoavesInput.value) || 1;
+                const total = parseFloat(totalWeightInput.value) || 0;
+                const totalInclusions = parseFloat(inclusionsWeightInput.value) || 0;
+                singleLoafWeightInput.value = Math.round(total / n);
+                inclusionsWeightSingleInput.value = Math.round(totalInclusions / n);
+            }
+
             // Toggle between calculation modes
             function toggleCalculationMode() {
                 const isSingleLoafMode = calculationModeToggle.checked;
@@ -494,6 +520,8 @@
                 if (isSingleLoafMode) {
                     totalWeightMode.classList.add('hidden');
                     singleLoafMode.classList.remove('hidden');
+                    // Refresh the now-visible Per Unit fields from the canonical recipe.
+                    projectToPerUnit();
                 } else {
                     totalWeightMode.classList.remove('hidden');
                     singleLoafMode.classList.add('hidden');
@@ -640,13 +668,9 @@
                 isValid &= validateInput('levain-hydration-percent', levainHydrationPercentInput.value);
                 isValid &= validateInput('white-flour-percent', whiteFlourPercentInput.value);
 
-                // Additional business logic validation
-                const totalWeight = isSingleLoafMode ? 
-                    (parseFloat(singleLoafWeightInput.value) || 0) * (parseFloat(numberOfLoavesInput.value) || 1) :
-                    parseFloat(totalWeightInput.value) || 0;
-                const inclusionsWeight = isSingleLoafMode ?
-                    (parseFloat(inclusionsWeightSingleInput.value) || 0) * (parseFloat(numberOfLoavesInput.value) || 1) :
-                    parseFloat(inclusionsWeightInput.value) || 0;
+                // Additional business logic validation against the canonical recipe.
+                const totalWeight = parseFloat(totalWeightInput.value) || 0;
+                const inclusionsWeight = parseFloat(inclusionsWeightInput.value) || 0;
 
                 if (totalWeight <= inclusionsWeight) {
                     const errorId = isSingleLoafMode ? 'inclusions-weight-single' : 'inclusions-weight';
@@ -695,20 +719,10 @@
                     return;
                 }
 
-                const isSingleLoafMode = calculationModeToggle.checked;
-                
-                // Get the input values and convert them to numbers
-                let totalWeight, inclusionsWeight;
-                
-                if (isSingleLoafMode) {
-                    const singleLoafWeight = parseFloat(singleLoafWeightInput.value);
-                    const numberOfLoaves = parseFloat(numberOfLoavesInput.value) || 1;
-                    inclusionsWeight = parseFloat(inclusionsWeightSingleInput.value) || 0;
-                    totalWeight = (singleLoafWeight - inclusionsWeight) * numberOfLoaves + (inclusionsWeight * numberOfLoaves);
-                } else {
-                    totalWeight = parseFloat(totalWeightInput.value);
-                    inclusionsWeight = parseFloat(inclusionsWeightInput.value) || 0;
-                }
+                // Read the canonical recipe. Per Unit edits are synced into these fields,
+                // so the calculation is mode-independent.
+                const totalWeight = parseFloat(totalWeightInput.value);
+                const inclusionsWeight = parseFloat(inclusionsWeightInput.value) || 0;
                 
                 const waterPercent = parseFloat(waterPercentInput.value);
                 const saltPercent = parseFloat(saltPercentInput.value);
@@ -778,7 +792,14 @@
                     // Real-time validation for individual input
                     const inputId = e.target.id;
                     validateInput(inputId, e.target.value);
-                    
+
+                    // Keep the two views in sync by routing the edit to the canonical store.
+                    if (inputId === 'single-loaf-weight' || inputId === 'inclusions-weight-single' || inputId === 'number-of-loaves') {
+                        updateCanonicalFromPerUnit();
+                    } else if (inputId === 'total-weight' || inputId === 'inclusions-weight') {
+                        projectToPerUnit();
+                    }
+
                     // Then run full calculation
                     calculateSourdough();
 
@@ -793,9 +814,11 @@
                 });
             });
 
-            // Restore any saved values before the first calculation, then sync the
-            // visible mode panel to the restored toggle state.
+            // Restore any saved values before the first calculation. Project the
+            // canonical recipe into the Per Unit view so both views are consistent,
+            // then sync the visible mode panel to the restored toggle state.
             loadState();
+            projectToPerUnit();
             toggleCalculationMode();
 
             // Initial calculation on page load
