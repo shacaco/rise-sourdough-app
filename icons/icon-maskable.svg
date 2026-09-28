@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 512 512">
+  <!-- Maskable variant: full-bleed green, artwork scaled into the central safe zone. -->
+  <rect x="0" y="0" width="512" height="512" fill="#2f6b4f"/>
+  <path d="M256 145.6 C 348.8 145.6 395.2 204.8 395.2 273.6 C 395.2 344 332.8 376 256 376 C 179.2 376 116.8 344 116.8 273.6 C 116.8 204.8 163.2 145.6 256 145.6 Z" fill="#f4f4f2"/>
+  <path d="M192 248 L 235.2 208" stroke="#2f6b4f" stroke-width="14.4" stroke-linecap="round" fill="none"/>
+  <path d="M233.6 281.6 L 276.8 241.6" stroke="#2f6b4f" stroke-width="14.4" stroke-linecap="round" fill="none"/>
+  <path d="M275.2 315.2 L 318.4 275.2" stroke="#2f6b4f" stroke-width="14.4" stroke-linecap="round" fill="none"/>
+</svg>

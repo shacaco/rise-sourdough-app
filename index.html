@@ -1,1099 +1,418 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-app-version="2026.09.28-3">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Primary Meta Tags -->
-    <title>Rise - Sourdough Calculator | Perfect Bread Recipes</title>
-    <meta name="title" content="Rise - Sourdough Calculator | Perfect Bread Recipes">
-    <meta name="description" content="Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking. Includes levain hydration, flour mixing, and inclusions. Free online tool for home bakers.">
-    <meta name="keywords" content="sourdough calculator, bread calculator, baker's percentages, sourdough recipe, bread recipe calculator, levain calculator, hydration calculator, flour calculator, bread making tool, sourdough bread, artisan bread, bread baking">
-    <meta name="author" content="Rise Sourdough Calculator">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="English">
-    <meta name="revisit-after" content="7 days">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://shacaco.github.io/rise-sourdough-app/">
-    <meta property="og:title" content="Rise - Sourdough Calculator | Perfect Bread Recipes">
-    <meta property="og:description" content="Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking. Free online tool for home bakers.">
-    <meta property="og:image" content="https://rise-sourdough.com/og-image.jpg">
-    <meta property="og:site_name" content="Rise Sourdough Calculator">
-    <meta property="og:locale" content="en_US">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://shacaco.github.io/rise-sourdough-app/">
-    <meta property="twitter:title" content="Rise - Sourdough Calculator | Perfect Bread Recipes">
-    <meta property="twitter:description" content="Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking. Free online tool for home bakers.">
-    <meta property="twitter:image" content="https://rise-sourdough.com/twitter-image.jpg">
-    <meta property="twitter:creator" content="@rise_sourdough">
-    
-    <!-- Additional SEO Meta Tags -->
-    <meta name="theme-color" content="#ffffff">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-config" content="./browserconfig.xml">
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://shacaco.github.io/rise-sourdough-app/">
-    
-    <!-- Preconnect to external domains -->
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
-    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
-    
-    <!-- PWA Manifest Link -->
-    <link rel="manifest" href="./manifest.json">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./icons/favicon-16x16.png">
-    
-    <!-- Icons for PWA -->
-    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
-    <link rel="mask-icon" href="./icons/safari-pinned-tab.svg" color="#4a2c0a">
-    
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Rise - Sourdough Calculator",
-        "description": "Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking.",
-        "url": "https://rise-sourdough.com/",
-        "applicationCategory": "FoodApplication",
-        "operatingSystem": "Web Browser",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        },
-        "author": {
-            "@type": "Organization",
-            "name": "Rise Sourdough Calculator"
-        },
-        "featureList": [
-            "Baker's percentage calculations",
-            "Total batch weight calculations",
-            "Per-unit weight calculations",
-            "Levain hydration calculator",
-            "Flour mixing ratios",
-            "Inclusions weight calculator",
-            "Real-time validation",
-            "Professional bread recipe tool"
-        ],
-        "screenshot": "https://rise-sourdough.com/screenshot.jpg",
-        "softwareVersion": "1.0",
-        "datePublished": "2024-01-01",
-        "dateModified": "2024-01-01",
-        "inLanguage": "en-US",
-        "isAccessibleForFree": true,
-        "browserRequirements": "Requires JavaScript. Requires HTML5.",
-        "softwareHelp": "https://rise-sourdough.com/help"
-    }
-    </script>
-    
-    <!-- External Resources -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Rise – Sourdough Calculator</title>
+  <meta name="description" content="Sourdough calculator built on baker's percentages. Work by total batch or per unit, set levain hydration, flour mix and inclusions, save your recipes and share them by link. Works offline.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://shacaco.github.io/rise-sourdough-app/">
+
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f4f2">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#121312">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Rise">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shacaco.github.io/rise-sourdough-app/">
+  <meta property="og:title" content="Rise – Sourdough Calculator">
+  <meta property="og:description" content="Baker's percentages for total batch or per-unit sourdough. Save recipes, share by link, works offline.">
+  <meta property="og:image" content="https://shacaco.github.io/rise-sourdough-app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Rise">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Rise – Sourdough Calculator">
+  <meta name="twitter:description" content="Baker's percentages for total batch or per-unit sourdough. Save recipes, share by link, works offline.">
+  <meta name="twitter:image" content="https://shacaco.github.io/rise-sourdough-app/og-image.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Rise – Sourdough Calculator",
+    "url": "https://shacaco.github.io/rise-sourdough-app/",
+    "description": "Sourdough calculator built on baker's percentages. Total batch or per-unit weights, levain hydration, flour mix, inclusions, saved recipes and share-by-link.",
+    "applicationCategory": "FoodApplication",
+    "operatingSystem": "Web Browser",
+    "browserRequirements": "Requires JavaScript",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "image": "https://shacaco.github.io/rise-sourdough-app/og-image.png",
+    "softwareVersion": "2.0",
+    "datePublished": "2024-01-01",
+    "dateModified": "2026-09-28",
+    "inLanguage": "en"
+  }
+  </script>
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('rise-theme');
+        if (t === 'light' || t === 'dark') {
+          var h = document.documentElement;
+          h.setAttribute('data-theme', t);
+          h.style.colorScheme = t;
         }
-        .container {
-            max-width: 420px;
-        }
-        input[type="number"] {
-            background-color: #f9fafb;
-        }
-        input[readonly] {
-            background-color: #f3f4f6;
-            color: #6b7280;
-            cursor: not-allowed;
-            border-color: #d1d5db;
-        }
-        
-        /* Validation styles */
-        .input-error {
-            border-color: #ef4444 !important;
-            background-color: #fef2f2 !important;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-        }
-        
-        .input-success {
-            border-color: #10b981 !important;
-            background-color: #f0fdf4 !important;
-        }
-        
-        .error-message {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-            display: none;
-        }
-        
-        .error-message.show {
-            display: block;
-        }
-        
-        .validation-summary {
-            background-color: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
-        
-        .validation-summary.show {
-            display: block;
-        }
-        
-        .validation-summary h4 {
-            color: #dc2626;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .validation-summary ul {
-            list-style-type: disc;
-            margin-left: 1rem;
-            color: #dc2626;
-        }
-    </style>
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preload" href="./fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./fonts/fraunces-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body>
+  <a class="skip-link" href="#main">Skip to calculator</a>
 
-    <!-- Keep Screen On Toggle (global, top of screen) -->
-    <div id="wake-lock-section" class="fixed top-0 inset-x-0 z-50 hidden bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm">
-        <div class="max-w-3xl mx-auto px-4 py-2 flex items-center justify-end">
-            <label class="relative inline-flex items-center cursor-pointer" for="wake-lock-toggle" title="Prevents your device from dimming or locking while you bake">
-                <span class="mr-3 text-sm font-medium text-gray-700">Keep screen on</span>
-                <input type="checkbox" id="wake-lock-toggle" class="sr-only peer" aria-describedby="wake-lock-description">
-                <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-            </label>
-        </div>
-        <span id="wake-lock-description" class="sr-only">Prevents your device from dimming or locking while you bake</span>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-print" viewBox="0 0 24 24"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-wake" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2"/><circle cx="12" cy="10" r="2.5"/><path d="M12 5.5v1"/><path d="M12 13.5v1"/><path d="M7.5 10h1"/><path d="M15.5 10h1"/><path d="M12 18h.01"/></symbol>
+  </svg>
+
+  <header class="app-header">
+    <div class="app-header__inner">
+      <h1 class="wordmark">Rise<span class="sr-only"> sourdough calculator</span></h1>
+
+      <button type="button" class="recipe-chip" id="recipe-chip" aria-haspopup="dialog" aria-controls="recipe-sheet" data-dirty="false" data-untitled="true">
+        <span class="recipe-chip__dot" aria-hidden="true"></span>
+        <span class="recipe-chip__name" id="recipe-chip-name">Untitled</span>
+        <span class="sr-only" id="recipe-chip-state"></span>
+        <svg class="icon icon--sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+      </button>
+
+      <div class="app-header__actions">
+        <button type="button" class="icon-btn" id="wake-lock" aria-pressed="false" aria-label="Keep screen on" title="Keep screen on" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-wake"/></svg>
+        </button>
+        <button type="button" class="icon-btn" id="menu-btn" popovertarget="app-menu" aria-label="Menu" title="Menu">
+          <svg class="icon" aria-hidden="true"><use href="#i-more"/></svg>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <main class="container mx-auto p-6 bg-white rounded-2xl shadow-xl" role="main" aria-label="Sourdough Calculator">
-        <!-- Header Section -->
-        <header class="text-center mb-6">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Rise</h1>
-            <h2 class="text-2xl font-semibold text-gray-700 mb-3">Sourdough Calculator</h2>
-            <p class="text-gray-500 mt-2">Calculate ingredient weights by total batch weight or per-unit weight and quantity. Perfect for home bakers.</p>
-        </header>
+  <main id="main" class="layout">
+    <form id="calc-form" class="inputs" novalidate autocomplete="off" aria-labelledby="inputs-title">
+      <h2 id="inputs-title" class="sr-only">Recipe inputs</h2>
 
-        <!-- Saved Recipes -->
-        <section class="mb-6 p-4 bg-gray-50 rounded-lg shadow-sm" aria-label="Saved Recipes">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-bold text-gray-800">My Recipes</h2>
-                <span id="recipe-dirty" class="hidden text-xs font-medium text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">Unsaved changes</span>
+      <div class="banner" id="share-banner" role="status" hidden>
+        <p class="banner__text" id="share-banner-text"></p>
+        <div class="banner__actions">
+          <button type="button" class="btn btn--primary btn--sm" id="share-open">Open</button>
+          <button type="button" class="btn btn--primary btn--sm" id="share-save" hidden>Save to my recipes</button>
+          <button type="button" class="btn btn--ghost btn--sm" id="share-dismiss">Dismiss</button>
+        </div>
+      </div>
+
+      <fieldset class="seg" id="mode-seg">
+        <legend class="sr-only">Calculation mode</legend>
+        <input class="seg__input sr-only" type="radio" name="mode" id="mode-batch" value="batch" aria-controls="panel-batch" checked>
+        <label class="seg__btn" for="mode-batch">Total batch</label>
+        <input class="seg__input sr-only" type="radio" name="mode" id="mode-unit" value="unit" aria-controls="panel-unit">
+        <label class="seg__btn" for="mode-unit">Per unit</label>
+      </fieldset>
+
+      <section class="card" aria-labelledby="dough-title">
+        <h2 class="card__title" id="dough-title">Dough</h2>
+
+        <div class="mode-panel" id="panel-batch">
+          <div class="field">
+            <label class="field__label" for="total-weight">Total dough weight<span class="sr-only">, grams</span></label>
+            <div class="field__control">
+              <input class="field__input" id="total-weight" name="total-weight" type="text" inputmode="decimal" enterkeyhint="next" data-field="totalWeight" value="750" aria-describedby="total-weight-help total-weight-error">
+              <span class="field__unit" aria-hidden="true">g</span>
             </div>
-            <div class="space-y-3">
-                <div>
-                    <label for="recipe-select" class="sr-only">Saved recipes</label>
-                    <select id="recipe-select" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-10 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <option value="">-- Select a recipe --</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="recipe-name" class="sr-only">Recipe name</label>
-                    <input type="text" id="recipe-name" placeholder="Recipe name" maxlength="60" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-4 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <button type="button" id="recipe-save" class="flex-1 min-w-[5rem] rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out">Save</button>
-                    <button type="button" id="recipe-new" class="flex-1 min-w-[5rem] rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out">New</button>
-                    <button type="button" id="recipe-delete" class="flex-1 min-w-[5rem] rounded-md bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm border border-gray-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out">Delete</button>
-                </div>
+            <div class="field__hint">
+              <p class="field__help" id="total-weight-help">Including inclusions</p>
+              <p class="field__error" id="total-weight-error"></p>
             </div>
-        </section>
+          </div>
 
-        <!-- Calculation Mode Toggle -->
-        <section class="mb-6" aria-label="Calculation Mode Selection">
-            <h2 class="sr-only">Choose Calculation Mode</h2>
-            <div class="flex items-center justify-center space-x-4">
-                <span class="text-sm font-medium text-gray-700">Total Batch</span>
-                <label class="relative inline-flex items-center cursor-pointer" for="calculation-mode-toggle">
-                    <input type="checkbox" id="calculation-mode-toggle" class="sr-only peer" aria-describedby="mode-description">
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                    <span class="ml-3 text-sm font-medium text-gray-700">Per Unit</span>
-                </label>
+          <div class="field">
+            <label class="field__label" for="inclusions-weight">Inclusions<span class="sr-only">, grams</span></label>
+            <div class="field__control">
+              <input class="field__input" id="inclusions-weight" name="inclusions-weight" type="text" inputmode="decimal" enterkeyhint="next" data-field="inclusions" value="0" aria-describedby="inclusions-weight-help inclusions-weight-error">
+              <span class="field__unit" aria-hidden="true">g</span>
             </div>
-            <p id="mode-description" class="text-xs text-gray-500 text-center mt-2">Toggle between calculating for total batch weight or individual unit quantities</p>
-        </section>
-
-        <!-- Validation Summary -->
-        <div id="validation-summary" class="validation-summary">
-            <h4>Please fix the following issues:</h4>
-            <ul id="validation-errors-list"></ul>
+            <div class="field__hint">
+              <p class="field__help" id="inclusions-weight-help">Seeds, nuts, fruit, cheese</p>
+              <p class="field__error" id="inclusions-weight-error"></p>
+            </div>
+          </div>
         </div>
 
-        <!-- Input Section -->
-        <form class="space-y-4" role="form" aria-label="Sourdough Recipe Calculator">
-            <!-- Total Weight Mode Inputs -->
-            <div id="total-weight-mode" class="space-y-4">
-                <!-- Total Dough Weight Input -->
-                <div>
-                    <label for="total-weight" class="block text-sm font-medium text-gray-700">Total Dough Weight (including inclusions) (g)</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="total-weight" name="total-weight" value="750" min="50" max="50000" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">g</span>
-                        </div>
-                    </div>
-                    <div id="total-weight-error" class="error-message"></div>
-                </div>
-
-                <!-- Inclusions Weight Input -->
-                <div>
-                    <label for="inclusions-weight" class="block text-sm font-medium text-gray-700">Inclusions (g)</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="inclusions-weight" name="inclusions-weight" value="0" min="0" max="20000" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">g</span>
-                        </div>
-                    </div>
-                    <div id="inclusions-weight-error" class="error-message"></div>
-                </div>
+        <div class="mode-panel" id="panel-unit" hidden>
+          <div class="field-grid">
+            <div class="field">
+              <label class="field__label" for="single-loaf-weight">Unit weight<span class="sr-only">, grams</span></label>
+              <div class="field__control">
+                <input class="field__input" id="single-loaf-weight" name="single-loaf-weight" type="text" inputmode="decimal" enterkeyhint="next" data-field="unitWeight" value="750" aria-describedby="single-loaf-weight-help single-loaf-weight-error">
+                <span class="field__unit" aria-hidden="true">g</span>
+              </div>
+              <div class="field__hint">
+                <p class="field__help" id="single-loaf-weight-help">Per loaf or roll</p>
+                <p class="field__error" id="single-loaf-weight-error"></p>
+              </div>
             </div>
 
-            <!-- Per Unit Mode Inputs -->
-            <div id="single-loaf-mode" class="space-y-4 hidden">
-                <!-- Unit Weight Input -->
-                <div>
-                    <label for="single-loaf-weight" class="block text-sm font-medium text-gray-700">Unit Weight (g)</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="single-loaf-weight" name="single-loaf-weight" value="750" min="50" max="2000" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">g</span>
-                        </div>
-                    </div>
-                    <div id="single-loaf-weight-error" class="error-message"></div>
-                </div>
-
-                <!-- Quantity Input -->
-                <div>
-                    <label for="number-of-loaves" class="block text-sm font-medium text-gray-700">Quantity</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="number-of-loaves" name="number-of-loaves" value="1" min="1" max="100" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">units</span>
-                        </div>
-                    </div>
-                    <div id="number-of-loaves-error" class="error-message"></div>
-                </div>
-
-                <!-- Inclusions Weight Input (shared) -->
-                <div>
-                    <label for="inclusions-weight-single" class="block text-sm font-medium text-gray-700">Inclusions per Unit (g)</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="inclusions-weight-single" name="inclusions-weight-single" value="0" min="0" max="500" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">g</span>
-                        </div>
-                    </div>
-                    <div id="inclusions-weight-single-error" class="error-message"></div>
-                </div>
+            <div class="field">
+              <label class="field__label" for="number-of-loaves">Quantity</label>
+              <div class="field__control">
+                <input class="field__input" id="number-of-loaves" name="number-of-loaves" type="text" inputmode="numeric" enterkeyhint="next" data-field="quantity" value="1" aria-describedby="number-of-loaves-help number-of-loaves-error">
+                <span class="field__unit" aria-hidden="true">units</span>
+              </div>
+              <div class="field__hint">
+                <p class="field__help" id="number-of-loaves-help">1–100</p>
+                <p class="field__error" id="number-of-loaves-error"></p>
+              </div>
             </div>
+          </div>
 
-            <!-- Baker's Percentages Section -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label for="water-percent" class="block text-sm font-medium text-gray-700">Water (%)</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="water-percent" name="water-percent" value="70" min="50" max="120" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">%</span>
-                        </div>
-                    </div>
-                    <div id="water-percent-error" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="salt-percent" class="block text-sm font-medium text-gray-700">Salt (%)</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="salt-percent" name="salt-percent" value="2" min="1" max="3" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">%</span>
-                        </div>
-                    </div>
-                    <div id="salt-percent-error" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="levain-percent" class="block text-sm font-medium text-gray-700">Levain (%)</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="levain-percent" name="levain-percent" value="20" min="5" max="50" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">%</span>
-                        </div>
-                    </div>
-                    <div id="levain-percent-error" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="levain-hydration-percent" class="block text-sm font-medium text-gray-700">Levain Hydration (%)</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="levain-hydration-percent" name="levain-hydration-percent" value="100" min="50" max="200" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">%</span>
-                        </div>
-                    </div>
-                    <div id="levain-hydration-percent-error" class="error-message"></div>
-                </div>
+          <div class="field">
+            <label class="field__label" for="inclusions-weight-single">Inclusions per unit<span class="sr-only">, grams</span></label>
+            <div class="field__control">
+              <input class="field__input" id="inclusions-weight-single" name="inclusions-weight-single" type="text" inputmode="decimal" enterkeyhint="next" data-field="unitInclusions" value="0" aria-describedby="inclusions-weight-single-help inclusions-weight-single-error">
+              <span class="field__unit" aria-hidden="true">g</span>
             </div>
-
-            <!-- Flour Mix Percentages Section -->
-            <hr class="border-gray-300 mt-4 mb-2">
-            <section aria-label="Flour Mix Configuration">
-                <h3 class="text-lg font-bold text-gray-800">Flour Mix</h3>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label for="white-flour-percent" class="block text-sm font-medium text-gray-700">White Flour (%)</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="white-flour-percent" name="white-flour-percent" value="100" min="0" max="100" step="0.1" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">%</span>
-                        </div>
-                    </div>
-                    <div id="white-flour-percent-error" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="other-flours-percent" class="block text-sm font-medium text-gray-500">Other Flours (%) <span class="text-xs text-gray-400">(calculated)</span></label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" id="other-flours-percent" name="other-flours-percent" value="0" class="block w-full rounded-md border-gray-300 py-2 pl-4 pr-12 focus:border-indigo-500 focus:ring-indigo-500 transition duration-150 ease-in-out" readonly>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm">%</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="field__hint">
+              <p class="field__help" id="inclusions-weight-single-help">Seeds, nuts, fruit, cheese</p>
+              <p class="field__error" id="inclusions-weight-single-error"></p>
             </div>
-            </section>
-        </form>
-
-        <!-- Results Section -->
-        <section id="results" class="mt-6 p-6 bg-gray-50 rounded-lg hidden" aria-label="Calculated Recipe Results">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Ingredients</h2>
-            <ul class="space-y-2">
-                <li class="flex justify-between items-center text-gray-900">
-                    <span>Main Flour</span>
-                    <span id="main-flour-result" class="font-semibold text-gray-900"></span>
-                </li>
-                <li class="flex justify-between items-center text-gray-800">
-                    <span class="ml-4">- White Flour</span>
-                    <span id="white-flour-result" class="font-semibold text-gray-900"></span>
-                </li>
-                <li class="flex justify-between items-center text-gray-800">
-                    <span class="ml-4">- Other Flours</span>
-                    <span id="other-flours-result" class="font-semibold text-gray-900"></span>
-                </li>
-                <li class="flex justify-between items-center text-gray-900">
-                    <span>Main Water</span>
-                    <span id="main-water-result" class="font-semibold text-gray-900"></span>
-                </li>
-                <li class="flex justify-between items-center text-gray-900">
-                    <span>Salt</span>
-                    <span id="salt-result" class="font-semibold text-gray-900"></span>
-                </li>
-                <li class="flex justify-between items-center text-gray-900">
-                    <span>Levain</span>
-                    <span id="levain-result" class="font-semibold text-gray-900"></span>
-                </li>
-                <li class="flex justify-between items-center text-gray-900">
-                    <span>Inclusions</span>
-                    <span id="inclusions-result" class="font-semibold text-gray-900"></span>
-                </li>
-            </ul>
-            
-            <hr class="my-4 border-gray-300">
-            <h3 class="text-md font-bold text-gray-900 mb-2">Levain Breakdown</h3>
-            <ul class="space-y-2">
-                <li class="flex justify-between items-center text-gray-800">
-                    <span>Levain Flour</span>
-                    <span id="levain-flour-result" class="font-semibold text-gray-900"></span>
-                </li>
-                <li class="flex justify-between items-center text-gray-800">
-                    <span>Levain Water</span>
-                    <span id="levain-water-result" class="font-semibold text-gray-900"></span>
-                </li>
-            </ul>
-        </section>
-    </main>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get all the necessary DOM elements
-            const calculationModeToggle = document.getElementById('calculation-mode-toggle');
-            const totalWeightMode = document.getElementById('total-weight-mode');
-            const singleLoafMode = document.getElementById('single-loaf-mode');
-            
-            const totalWeightInput = document.getElementById('total-weight');
-            const inclusionsWeightInput = document.getElementById('inclusions-weight');
-            const singleLoafWeightInput = document.getElementById('single-loaf-weight');
-            const numberOfLoavesInput = document.getElementById('number-of-loaves');
-            const inclusionsWeightSingleInput = document.getElementById('inclusions-weight-single');
-            
-            const waterPercentInput = document.getElementById('water-percent');
-            const saltPercentInput = document.getElementById('salt-percent');
-            const levainPercentInput = document.getElementById('levain-percent');
-            const levainHydrationPercentInput = document.getElementById('levain-hydration-percent');
-            const whiteFlourPercentInput = document.getElementById('white-flour-percent');
-            const otherFloursPercentInput = document.getElementById('other-flours-percent');
-            const resultsDiv = document.getElementById('results');
-            
-            const mainFlourResultSpan = document.getElementById('main-flour-result');
-            const mainWaterResultSpan = document.getElementById('main-water-result');
-            const saltResultSpan = document.getElementById('salt-result');
-            const levainResultSpan = document.getElementById('levain-result');
-            const inclusionsResultSpan = document.getElementById('inclusions-result');
-            const whiteFlourResultSpan = document.getElementById('white-flour-result');
-            const otherFloursResultSpan = document.getElementById('other-flours-result');
-            
-            const levainFlourResultSpan = document.getElementById('levain-flour-result');
-            const levainWaterResultSpan = document.getElementById('levain-water-result');
-
-            // --- Local Storage Persistence ---
-            // Single versioned key so we can invalidate cleanly if field semantics change.
-            const STORAGE_KEY = 'rise-recipe-v1';      // working state (live inputs)
-            const RECIPES_KEY = 'rise-recipes-v1';     // named recipe library
-            const MODE_TOGGLE_ID = 'calculation-mode-toggle';
-            // Recipe inputs we persist. Excludes the derived `other-flours-percent`
-            // and the transient `wake-lock-toggle`.
-            const PERSISTED_IDS = [
-                'total-weight', 'inclusions-weight',
-                'single-loaf-weight', 'number-of-loaves', 'inclusions-weight-single',
-                'water-percent', 'salt-percent', 'levain-percent',
-                'levain-hydration-percent', 'white-flour-percent'
-            ];
-
-            // Saved Recipes UI elements.
-            const recipeSelect = document.getElementById('recipe-select');
-            const recipeNameInput = document.getElementById('recipe-name');
-            const recipeSaveBtn = document.getElementById('recipe-save');
-            const recipeNewBtn = document.getElementById('recipe-new');
-            const recipeDeleteBtn = document.getElementById('recipe-delete');
-            const recipeDirtyBadge = document.getElementById('recipe-dirty');
-
-            // Name of the currently loaded named recipe (null = unsaved draft).
-            let activeRecipeName = null;
-
-            // Build a plain object of the current recipe (field values + mode).
-            function collectState() {
-                const state = {};
-                PERSISTED_IDS.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) state[id] = el.value;
-                });
-                state[MODE_TOGGLE_ID] = calculationModeToggle.checked;
-                return state;
-            }
-
-            // Apply a recipe object to the inputs, skipping out-of-range/garbage values.
-            function applyState(state) {
-                if (!state || typeof state !== 'object') return;
-                PERSISTED_IDS.forEach(id => {
-                    if (!(id in state)) return;
-                    const el = document.getElementById(id);
-                    if (!el) return;
-                    const value = state[id];
-                    const rule = validationRules[id];
-                    // Skip stale/garbage values that fall outside the known bounds so a
-                    // corrupted store can't break the calculation.
-                    if (rule) {
-                        const num = parseFloat(value);
-                        if (isNaN(num) || num < rule.min || num > rule.max) return;
-                    }
-                    el.value = value;
-                });
-                if (typeof state[MODE_TOGGLE_ID] === 'boolean') {
-                    calculationModeToggle.checked = state[MODE_TOGGLE_ID];
-                }
-            }
-
-            function saveState() {
-                try {
-                    const state = collectState();
-                    state.activeRecipeName = activeRecipeName;
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-                } catch (err) {
-                    // Private mode / quota / disabled storage: persistence is best-effort.
-                    console.log(`Could not save state: ${err.name}, ${err.message}`);
-                }
-            }
-
-            function loadState() {
-                let state;
-                try {
-                    const raw = localStorage.getItem(STORAGE_KEY);
-                    if (!raw) return;
-                    state = JSON.parse(raw);
-                } catch (err) {
-                    console.log(`Could not load state: ${err.name}, ${err.message}`);
-                    return;
-                }
-                if (!state || typeof state !== 'object') return;
-
-                applyState(state);
-
-                if (typeof state.activeRecipeName === 'string') {
-                    activeRecipeName = state.activeRecipeName;
-                    recipeNameInput.value = state.activeRecipeName;
-                }
-            }
-
-            // --- Named Recipe Library ---
-            function getRecipes() {
-                try {
-                    const raw = localStorage.getItem(RECIPES_KEY);
-                    if (!raw) return {};
-                    const parsed = JSON.parse(raw);
-                    return (parsed && typeof parsed === 'object') ? parsed : {};
-                } catch (err) {
-                    console.log(`Could not read recipes: ${err.name}, ${err.message}`);
-                    return {};
-                }
-            }
-
-            function setRecipes(map) {
-                try {
-                    localStorage.setItem(RECIPES_KEY, JSON.stringify(map));
-                } catch (err) {
-                    console.log(`Could not save recipes: ${err.name}, ${err.message}`);
-                }
-            }
-
-            // Stable signature over the persisted fields for dirty comparison.
-            function recipeSignature(state) {
-                if (!state) return '';
-                const ordered = {};
-                PERSISTED_IDS.forEach(id => { ordered[id] = String(state[id] ?? ''); });
-                ordered[MODE_TOGGLE_ID] = !!state[MODE_TOGGLE_ID];
-                return JSON.stringify(ordered);
-            }
-
-            function refreshRecipeSelect() {
-                const recipes = getRecipes();
-                const names = Object.keys(recipes).sort((a, b) => a.localeCompare(b));
-                recipeSelect.innerHTML = '<option value="">-- Select a recipe --</option>';
-                names.forEach(name => {
-                    const opt = document.createElement('option');
-                    opt.value = name;
-                    opt.textContent = name;
-                    recipeSelect.appendChild(opt);
-                });
-                recipeSelect.value = (activeRecipeName && recipes[activeRecipeName]) ? activeRecipeName : '';
-                recipeDeleteBtn.disabled = !recipeSelect.value;
-            }
-
-            // Show the badge when the live inputs differ from the active saved recipe.
-            // Also keep the Save button disabled when there is no name to save under.
-            function updateDirtyIndicator() {
-                recipeSaveBtn.disabled = recipeNameInput.value.trim() === '';
-
-                let dirty = false;
-                if (activeRecipeName) {
-                    const recipes = getRecipes();
-                    const saved = recipes[activeRecipeName];
-                    if (saved) {
-                        dirty = recipeSignature(collectState()) !== recipeSignature(saved);
-                    }
-                }
-                recipeDirtyBadge.classList.toggle('hidden', !dirty);
-            }
-
-            function isDirty() {
-                return !recipeDirtyBadge.classList.contains('hidden');
-            }
-
-            function saveActiveRecipe() {
-                const name = recipeNameInput.value.trim();
-                if (name === '') return;
-                const recipes = getRecipes();
-                if (Object.prototype.hasOwnProperty.call(recipes, name) && name !== activeRecipeName) {
-                    if (!confirm(`A recipe named "${name}" already exists. Overwrite it?`)) return;
-                }
-                recipes[name] = collectState();
-                setRecipes(recipes);
-                activeRecipeName = name;
-                saveState();
-                refreshRecipeSelect();
-                updateDirtyIndicator();
-            }
-
-            function loadRecipe(name) {
-                const recipes = getRecipes();
-                const recipe = recipes[name];
-                if (!recipe) return;
-                if (isDirty() && !confirm('Discard unsaved changes and load the selected recipe?')) {
-                    recipeSelect.value = activeRecipeName || '';
-                    return;
-                }
-                applyState(recipe);
-                activeRecipeName = name;
-                recipeNameInput.value = name;
-                projectToPerUnit();
-                toggleCalculationMode();
-                calculateSourdough();
-                saveState();
-                refreshRecipeSelect();
-                updateDirtyIndicator();
-            }
-
-            function deleteActiveRecipe() {
-                const name = recipeSelect.value || activeRecipeName;
-                if (!name) return;
-                if (!confirm(`Delete the recipe "${name}"? This cannot be undone.`)) return;
-                const recipes = getRecipes();
-                delete recipes[name];
-                setRecipes(recipes);
-                if (activeRecipeName === name) {
-                    activeRecipeName = null;
-                    recipeNameInput.value = '';
-                }
-                saveState();
-                refreshRecipeSelect();
-                updateDirtyIndicator();
-            }
-
-            function newRecipe() {
-                if (isDirty() && !confirm('Discard unsaved changes and start a new recipe?')) return;
-                PERSISTED_IDS.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.value = el.defaultValue;
-                });
-                calculationModeToggle.checked = false;
-                activeRecipeName = null;
-                recipeNameInput.value = '';
-                projectToPerUnit();
-                toggleCalculationMode();
-                calculateSourdough();
-                saveState();
-                refreshRecipeSelect();
-                updateDirtyIndicator();
-            }
-
-            // --- Recipe View Synchronization ---
-            // The Batch fields (total-weight, inclusions-weight) are the canonical store.
-            // The Per Unit view is a projection of the canonical recipe given quantity.
-            // Editing either view updates the canonical store so toggling is a pure view flip.
-
-            // Per Unit edit -> canonical. Quantity edits keep unit weight fixed and grow
-            // the total (total = unit x quantity), so this also covers number-of-loaves.
-            function updateCanonicalFromPerUnit() {
-                const n = parseFloat(numberOfLoavesInput.value) || 1;
-                const unitWeight = parseFloat(singleLoafWeightInput.value) || 0;
-                const perUnitInclusions = parseFloat(inclusionsWeightSingleInput.value) || 0;
-                totalWeightInput.value = unitWeight * n;
-                inclusionsWeightInput.value = perUnitInclusions * n;
-            }
-
-            // Canonical -> Per Unit projection. Keeps quantity, derives unit weight.
-            // Displayed per-unit values are rounded to whole grams; the canonical batch
-            // values retain full precision and are what calculateSourdough() reads.
-            function projectToPerUnit() {
-                const n = parseFloat(numberOfLoavesInput.value) || 1;
-                const total = parseFloat(totalWeightInput.value) || 0;
-                const totalInclusions = parseFloat(inclusionsWeightInput.value) || 0;
-                singleLoafWeightInput.value = Math.round(total / n);
-                inclusionsWeightSingleInput.value = Math.round(totalInclusions / n);
-            }
-
-            // Toggle between calculation modes
-            function toggleCalculationMode() {
-                const isSingleLoafMode = calculationModeToggle.checked;
-                
-                if (isSingleLoafMode) {
-                    totalWeightMode.classList.add('hidden');
-                    singleLoafMode.classList.remove('hidden');
-                    // Refresh the now-visible Per Unit fields from the canonical recipe.
-                    projectToPerUnit();
-                } else {
-                    totalWeightMode.classList.remove('hidden');
-                    singleLoafMode.classList.add('hidden');
-                }
-                
-                // Recalculate when switching modes
-                calculateSourdough();
-
-                // Persist the selected mode and refresh the unsaved-changes badge.
-                saveState();
-                updateDirtyIndicator();
-            }
-
-            // Add event listener for toggle
-            calculationModeToggle.addEventListener('change', toggleCalculationMode);
-
-            // Saved Recipes control wiring.
-            recipeSaveBtn.addEventListener('click', saveActiveRecipe);
-            recipeNewBtn.addEventListener('click', newRecipe);
-            recipeDeleteBtn.addEventListener('click', deleteActiveRecipe);
-            recipeSelect.addEventListener('change', () => {
-                if (recipeSelect.value) loadRecipe(recipeSelect.value);
-            });
-            recipeNameInput.addEventListener('input', updateDirtyIndicator);
-
-            // Validation rules and messages
-            const validationRules = {
-                'total-weight': {
-                    min: 50,
-                    max: 50000,
-                    message: 'Total dough weight must be between 50g and 50000g'
-                },
-                'inclusions-weight': {
-                    min: 0,
-                    max: 20000,
-                    message: 'Inclusions weight must be between 0g and 20000g'
-                },
-                'single-loaf-weight': {
-                    min: 50,
-                    max: 2000,
-                    message: 'Unit weight must be between 50g and 2000g'
-                },
-                'number-of-loaves': {
-                    min: 1,
-                    max: 100,
-                    message: 'Quantity must be between 1 and 100 units'
-                },
-                'inclusions-weight-single': {
-                    min: 0,
-                    max: 500,
-                    message: 'Inclusions per unit must be between 0g and 500g'
-                },
-                'water-percent': {
-                    min: 50,
-                    max: 120,
-                    message: 'Water percentage must be between 50% and 120%'
-                },
-                'salt-percent': {
-                    min: 1,
-                    max: 3,
-                    message: 'Salt percentage must be between 1% and 3%'
-                },
-                'levain-percent': {
-                    min: 5,
-                    max: 50,
-                    message: 'Levain percentage must be between 5% and 50%'
-                },
-                'levain-hydration-percent': {
-                    min: 50,
-                    max: 200,
-                    message: 'Levain hydration must be between 50% and 200%'
-                },
-                'white-flour-percent': {
-                    min: 0,
-                    max: 100,
-                    message: 'White flour percentage must be between 0% and 100%'
-                }
-            };
-
-            // Validation state
-            let validationErrors = [];
-            let isValid = true;
-
-            // Function to validate a single input
-            function validateInput(inputId, value) {
-                const rule = validationRules[inputId];
-                if (!rule) return true;
-
-                const numValue = parseFloat(value);
-                const errorElement = document.getElementById(inputId + '-error');
-                const inputElement = document.getElementById(inputId);
-
-                // Clear previous error state
-                if (errorElement) {
-                    errorElement.classList.remove('show');
-                    errorElement.textContent = '';
-                }
-                if (inputElement) {
-                    inputElement.classList.remove('input-error', 'input-success');
-                }
-
-                // Check if value is valid number
-                if (isNaN(numValue)) {
-                    if (errorElement) {
-                        errorElement.textContent = 'Please enter a valid number';
-                        errorElement.classList.add('show');
-                    }
-                    if (inputElement) {
-                        inputElement.classList.add('input-error');
-                    }
-                    return false;
-                }
-
-                // Check range
-                if (numValue < rule.min || numValue > rule.max) {
-                    if (errorElement) {
-                        errorElement.textContent = rule.message;
-                        errorElement.classList.add('show');
-                    }
-                    if (inputElement) {
-                        inputElement.classList.add('input-error');
-                    }
-                    return false;
-                }
-
-                // Success state
-                if (inputElement) {
-                    inputElement.classList.add('input-success');
-                }
-                return true;
-            }
-
-            // Function to validate all inputs
-            function validateAllInputs() {
-                validationErrors = [];
-                isValid = true;
-
-                // Validate based on current mode
-                const isSingleLoafMode = calculationModeToggle.checked;
-                
-                if (isSingleLoafMode) {
-                    isValid &= validateInput('single-loaf-weight', singleLoafWeightInput.value);
-                    isValid &= validateInput('number-of-loaves', numberOfLoavesInput.value);
-                    isValid &= validateInput('inclusions-weight-single', inclusionsWeightSingleInput.value);
-                } else {
-                    isValid &= validateInput('total-weight', totalWeightInput.value);
-                    isValid &= validateInput('inclusions-weight', inclusionsWeightInput.value);
-                }
-
-                // Validate percentages
-                isValid &= validateInput('water-percent', waterPercentInput.value);
-                isValid &= validateInput('salt-percent', saltPercentInput.value);
-                isValid &= validateInput('levain-percent', levainPercentInput.value);
-                isValid &= validateInput('levain-hydration-percent', levainHydrationPercentInput.value);
-                isValid &= validateInput('white-flour-percent', whiteFlourPercentInput.value);
-
-                // Additional business logic validation against the canonical recipe.
-                const totalWeight = parseFloat(totalWeightInput.value) || 0;
-                const inclusionsWeight = parseFloat(inclusionsWeightInput.value) || 0;
-
-                if (totalWeight <= inclusionsWeight) {
-                    const errorId = isSingleLoafMode ? 'inclusions-weight-single' : 'inclusions-weight';
-                    const errorElement = document.getElementById(errorId + '-error');
-                    const inputElement = document.getElementById(errorId);
-                    
-                    if (errorElement) {
-                        errorElement.textContent = 'Inclusions cannot exceed total dough weight';
-                        errorElement.classList.add('show');
-                    }
-                    if (inputElement) {
-                        inputElement.classList.add('input-error');
-                    }
-                    isValid = false;
-                }
-
-                // Show/hide validation summary
-                const validationSummary = document.getElementById('validation-summary');
-                const validationErrorsList = document.getElementById('validation-errors-list');
-                
-                if (!isValid) {
-                    validationSummary.classList.add('show');
-                    validationErrorsList.innerHTML = '';
-                    
-                    // Collect all error messages
-                    const allErrorElements = document.querySelectorAll('.error-message.show');
-                    allErrorElements.forEach(errorElement => {
-                        if (errorElement.textContent) {
-                            const li = document.createElement('li');
-                            li.textContent = errorElement.textContent;
-                            validationErrorsList.appendChild(li);
-                        }
-                    });
-                } else {
-                    validationSummary.classList.remove('show');
-                }
-
-                return isValid;
-            }
-
-            // Function to perform the calculations
-            function calculateSourdough() {
-                // Validate all inputs first
-                if (!validateAllInputs()) {
-                    resultsDiv.classList.add('hidden');
-                    return;
-                }
-
-                // Read the canonical recipe. Per Unit edits are synced into these fields,
-                // so the calculation is mode-independent.
-                const totalWeight = parseFloat(totalWeightInput.value);
-                const inclusionsWeight = parseFloat(inclusionsWeightInput.value) || 0;
-                
-                const waterPercent = parseFloat(waterPercentInput.value);
-                const saltPercent = parseFloat(saltPercentInput.value);
-                const levainPercent = parseFloat(levainPercentInput.value);
-                const levainHydrationPercent = parseFloat(levainHydrationPercentInput.value);
-                const whiteFlourPercent = parseFloat(whiteFlourPercentInput.value);
-
-                // Update the other flour percentage
-                otherFloursPercentInput.value = 100 - whiteFlourPercent;
-
-                // Calculate the dough weight without inclusions
-                const doughWeight = totalWeight - inclusionsWeight;
-
-                // Convert percentages to decimals
-                const waterRatio = waterPercent / 100;
-                const saltRatio = saltPercent / 100;
-                const levainRatio = levainPercent / 100;
-                const levainHydrationRatio = levainHydrationPercent / 100;
-                
-                // --- CORRECTED CALCULATION LOGIC ---
-                // The total dough weight (without inclusions) is the sum of total flour, total water, and salt.
-                // All percentages are based on the total flour weight (F_total).
-                // DoughWeight = F_total + (F_total * waterRatio) + (F_total * saltRatio)
-                // DoughWeight = F_total * (1 + waterRatio + saltRatio)
-                
-                const doughRatio = 1 + waterRatio + saltRatio;
-                const totalFlourWeight = doughWeight / doughRatio;
-
-                // Now calculate the weight of all ingredients
-                const totalWaterWeight = totalFlourWeight * waterRatio;
-                const totalSaltWeight = totalFlourWeight * saltRatio;
-                const totalLevainWeight = totalFlourWeight * levainRatio;
-
-                // Breakdown the levain into its flour and water components
-                const levainFlourWeight = totalLevainWeight / (1 + levainHydrationRatio);
-                const levainWaterWeight = totalLevainWeight - levainFlourWeight;
-
-                // Calculate the main dough flour and water by subtracting levain components
-                const mainFlourWeight = totalFlourWeight - levainFlourWeight;
-                const mainWaterWeight = totalWaterWeight - levainWaterWeight;
-
-                // Calculate the breakdown of the MAIN flour
-                const whiteFlourWeight = mainFlourWeight * (whiteFlourPercent / 100);
-                const otherFloursWeight = mainFlourWeight - whiteFlourWeight;
-                
-                // Display the results with specified rounding
-                mainFlourResultSpan.textContent = `${mainFlourWeight.toFixed(0)} g`;
-                mainWaterResultSpan.textContent = `${mainWaterWeight.toFixed(0)} g`;
-                saltResultSpan.textContent = `${totalSaltWeight.toFixed(1)} g`;
-                levainResultSpan.textContent = `${totalLevainWeight.toFixed(0)} g`;
-                inclusionsResultSpan.textContent = `${inclusionsWeight.toFixed(0)} g`;
-                
-                whiteFlourResultSpan.textContent = `${whiteFlourWeight.toFixed(0)} g`;
-                otherFloursResultSpan.textContent = `${otherFloursWeight.toFixed(0)} g`;
-                
-                // Display the levain breakdown
-                levainFlourResultSpan.textContent = `${levainFlourWeight.toFixed(0)} g`;
-                levainWaterResultSpan.textContent = `${levainWaterWeight.toFixed(0)} g`;
-
-                // Show the results section
-                resultsDiv.classList.remove('hidden');
-            }
-
-            // Add event listeners for input changes with real-time validation
-            [totalWeightInput, inclusionsWeightInput, singleLoafWeightInput, numberOfLoavesInput, inclusionsWeightSingleInput, waterPercentInput, saltPercentInput, levainPercentInput, levainHydrationPercentInput, whiteFlourPercentInput].forEach(input => {
-                input.addEventListener('input', (e) => {
-                    // Real-time validation for individual input
-                    const inputId = e.target.id;
-                    validateInput(inputId, e.target.value);
-
-                    // Keep the two views in sync by routing the edit to the canonical store.
-                    if (inputId === 'single-loaf-weight' || inputId === 'inclusions-weight-single' || inputId === 'number-of-loaves') {
-                        updateCanonicalFromPerUnit();
-                    } else if (inputId === 'total-weight' || inputId === 'inclusions-weight') {
-                        projectToPerUnit();
-                    }
-
-                    // Then run full calculation
-                    calculateSourdough();
-
-                    // Persist the latest values and refresh the unsaved-changes badge.
-                    saveState();
-                    updateDirtyIndicator();
-                });
-                
-                // Also validate on blur for better UX
-                input.addEventListener('blur', (e) => {
-                    const inputId = e.target.id;
-                    validateInput(inputId, e.target.value);
-                });
-            });
-
-            // Restore any saved values before the first calculation. Project the
-            // canonical recipe into the Per Unit view so both views are consistent,
-            // then sync the visible mode panel to the restored toggle state.
-            loadState();
-            projectToPerUnit();
-            toggleCalculationMode();
-
-            // Initial calculation on page load
-            calculateSourdough();
-
-            // Populate the saved-recipe dropdown and sync the unsaved-changes badge.
-            refreshRecipeSelect();
-            updateDirtyIndicator();
-
-            // --- Keep Screen On (Wake Lock API) ---
-            const wakeLockSection = document.getElementById('wake-lock-section');
-            const wakeLockToggle = document.getElementById('wake-lock-toggle');
-
-            // Only expose the feature when the browser supports the Wake Lock API.
-            if ('wakeLock' in navigator) {
-                wakeLockSection.classList.remove('hidden');
-
-                let wakeLock = null;
-
-                async function requestWakeLock() {
-                    try {
-                        wakeLock = await navigator.wakeLock.request('screen');
-                        // The lock can be released by the system (e.g. tab hidden); keep the
-                        // toggle in sync if that happens while it's still switched on.
-                        wakeLock.addEventListener('release', () => {
-                            wakeLock = null;
-                            if (!document.hidden) {
-                                wakeLockToggle.checked = false;
-                            }
-                        });
-                    } catch (err) {
-                        console.log(`Wake Lock request failed: ${err.name}, ${err.message}`);
-                        wakeLockToggle.checked = false;
-                    }
-                }
-
-                async function releaseWakeLock() {
-                    if (wakeLock) {
-                        const lock = wakeLock;
-                        wakeLock = null;
-                        try {
-                            await lock.release();
-                        } catch (err) {
-                            console.log(`Wake Lock release failed: ${err.name}, ${err.message}`);
-                        }
-                    }
-                }
-
-                wakeLockToggle.addEventListener('change', () => {
-                    if (wakeLockToggle.checked) {
-                        requestWakeLock();
-                    } else {
-                        releaseWakeLock();
-                    }
-                });
-
-                // The OS releases the lock when the page is hidden; re-acquire it when the
-                // page becomes visible again and the toggle is still on.
-                document.addEventListener('visibilitychange', () => {
-                    if (!document.hidden && wakeLockToggle.checked && wakeLock === null) {
-                        requestWakeLock();
-                    }
-                });
-            }
-        });
-
-        // PWA Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swUrl = '/rise-sourdough-app/service-worker.js';
-                navigator.serviceWorker.register(swUrl, { scope: '/rise-sourdough-app/' }).then(registration => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, err => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-    </script>
-
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="formula-title">
+        <h2 class="card__title" id="formula-title">Formula</h2>
+
+        <div class="field-grid">
+          <div class="field">
+            <label class="field__label" for="water-percent">Water<span class="sr-only">, percent</span></label>
+            <div class="field__control">
+              <input class="field__input" id="water-percent" name="water-percent" type="text" inputmode="decimal" enterkeyhint="next" data-field="waterPct" value="70" aria-describedby="water-percent-help water-percent-error">
+              <span class="field__unit" aria-hidden="true">%</span>
+            </div>
+            <div class="field__hint">
+              <p class="field__help" id="water-percent-help">Hydration</p>
+              <p class="field__error" id="water-percent-error"></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="salt-percent">Salt<span class="sr-only">, percent</span></label>
+            <div class="field__control">
+              <input class="field__input" id="salt-percent" name="salt-percent" type="text" inputmode="decimal" enterkeyhint="next" data-field="saltPct" value="2" aria-describedby="salt-percent-help salt-percent-error">
+              <span class="field__unit" aria-hidden="true">%</span>
+            </div>
+            <div class="field__hint">
+              <p class="field__help" id="salt-percent-help">Of total flour</p>
+              <p class="field__error" id="salt-percent-error"></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="levain-percent">Levain<span class="sr-only">, percent</span></label>
+            <div class="field__control">
+              <input class="field__input" id="levain-percent" name="levain-percent" type="text" inputmode="decimal" enterkeyhint="next" data-field="levainPct" value="20" aria-describedby="levain-percent-help levain-percent-error">
+              <span class="field__unit" aria-hidden="true">%</span>
+            </div>
+            <div class="field__hint">
+              <p class="field__help" id="levain-percent-help">Of total flour</p>
+              <p class="field__error" id="levain-percent-error"></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="levain-hydration-percent">Levain hydration<span class="sr-only">, percent</span></label>
+            <div class="field__control">
+              <input class="field__input" id="levain-hydration-percent" name="levain-hydration-percent" type="text" inputmode="decimal" enterkeyhint="next" data-field="levainHydrationPct" value="100" aria-describedby="levain-hydration-percent-help levain-hydration-percent-error">
+              <span class="field__unit" aria-hidden="true">%</span>
+            </div>
+            <div class="field__hint">
+              <p class="field__help" id="levain-hydration-percent-help">Water in the starter</p>
+              <p class="field__error" id="levain-hydration-percent-error"></p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="card__subtitle" id="flour-title">Flour mix</h3>
+        <div class="field-grid">
+          <div class="field">
+            <label class="field__label" for="white-flour-percent">White flour<span class="sr-only">, percent</span></label>
+            <div class="field__control">
+              <input class="field__input" id="white-flour-percent" name="white-flour-percent" type="text" inputmode="decimal" enterkeyhint="done" data-field="whiteFlourPct" value="100" aria-describedby="white-flour-percent-help white-flour-percent-error">
+              <span class="field__unit" aria-hidden="true">%</span>
+            </div>
+            <div class="field__hint">
+              <p class="field__help" id="white-flour-percent-help">Of main flour</p>
+              <p class="field__error" id="white-flour-percent-error"></p>
+            </div>
+          </div>
+
+          <div class="field field--readout">
+            <span class="field__label" id="other-flours-label">Other flours</span>
+            <output class="field__readout" id="other-flours-percent" for="white-flour-percent" aria-labelledby="other-flours-label"><span id="other-flours-value">0</span><span class="field__unit" aria-hidden="true">%</span></output>
+            <div class="field__hint">
+              <p class="field__help">Whole wheat, rye, spelt</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </form>
+
+    <section class="results" id="results" aria-labelledby="results-title">
+      <div class="results__head">
+        <h2 class="results__title" id="results-title">Ingredients</h2>
+        <div class="results__actions">
+          <button type="button" class="btn btn--ghost btn--sm" id="copy-recipe" title="Copy the ingredient list">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-copy"/></svg><span id="copy-recipe-label">Copy</span>
+          </button>
+          <button type="button" class="btn btn--ghost btn--sm" id="share-recipe" title="Share this recipe as a link">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-share"/></svg><span>Share</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="results__caption" id="results-caption"></p>
+      <p class="results__status" id="results-status" role="status" aria-live="polite" aria-atomic="true"></p>
+
+      <div class="results__body" id="results-body">
+        <dl class="headline">
+          <div class="headline__item">
+            <dt class="headline__label">Total flour</dt>
+            <dd class="headline__value"><span id="total-flour-result">0</span><small>g</small></dd>
+          </div>
+          <div class="headline__item">
+            <dt class="headline__label">Hydration</dt>
+            <dd class="headline__value"><span id="hydration-result">0</span><small>%</small></dd>
+          </div>
+          <div class="headline__item">
+            <dt class="headline__label">Prefermented</dt>
+            <dd class="headline__value"><span id="pff-result">0</span><small>%</small></dd>
+          </div>
+        </dl>
+
+        <dl class="rows">
+          <div class="row"><dt class="row__label">Flour</dt><dd class="row__value" id="main-flour-result"></dd></div>
+          <div class="row row--sub"><dt class="row__label">White flour</dt><dd class="row__value" id="white-flour-result"></dd></div>
+          <div class="row row--sub"><dt class="row__label">Other flours</dt><dd class="row__value" id="other-flours-result"></dd></div>
+          <div class="row"><dt class="row__label">Water</dt><dd class="row__value" id="main-water-result"></dd></div>
+          <div class="row"><dt class="row__label">Salt</dt><dd class="row__value" id="salt-result"></dd></div>
+          <div class="row"><dt class="row__label">Levain</dt><dd class="row__value" id="levain-result"></dd></div>
+          <div class="row"><dt class="row__label">Inclusions</dt><dd class="row__value" id="inclusions-result"></dd></div>
+        </dl>
+
+        <h3 class="results__subhead">Levain build</h3>
+        <dl class="rows">
+          <div class="row"><dt class="row__label">Flour</dt><dd class="row__value" id="levain-flour-result"></dd></div>
+          <div class="row"><dt class="row__label">Water</dt><dd class="row__value" id="levain-water-result"></dd></div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <div class="menu" id="app-menu" popover aria-labelledby="menu-title">
+    <h2 class="sr-only" id="menu-title">Menu</h2>
+    <fieldset class="menu__theme" id="theme-seg">
+      <legend class="menu__label">Theme</legend>
+      <div class="seg seg--sm">
+        <input class="seg__input sr-only" type="radio" name="theme" id="theme-system" value="system" checked>
+        <label class="seg__btn" for="theme-system"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-monitor"/></svg>Auto</label>
+        <input class="seg__input sr-only" type="radio" name="theme" id="theme-light" value="light">
+        <label class="seg__btn" for="theme-light"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sun"/></svg>Light</label>
+        <input class="seg__input sr-only" type="radio" name="theme" id="theme-dark" value="dark">
+        <label class="seg__btn" for="theme-dark"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-moon"/></svg>Dark</label>
+      </div>
+    </fieldset>
+    <div class="menu__divider" role="separator"></div>
+    <button type="button" class="menu__item" id="menu-print"><svg class="icon" aria-hidden="true"><use href="#i-print"/></svg>Print recipe</button>
+    <button type="button" class="menu__item" id="menu-signin" hidden>Sign in</button>
+    <p class="menu__meta" id="app-version"></p>
+  </div>
+
+  <dialog class="sheet" id="recipe-sheet" aria-labelledby="recipe-sheet-title">
+    <div class="sheet__handle" aria-hidden="true"></div>
+    <div class="sheet__head">
+      <h2 class="sheet__title" id="recipe-sheet-title">Recipes</h2>
+      <button type="button" class="icon-btn" id="recipe-sheet-close" aria-label="Close">
+        <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
+    <div class="sheet__body">
+      <ul class="recipe-list" id="recipe-list">
+        <li>
+          <button type="button" class="recipe-item recipe-item--new" id="recipe-new">
+            <span class="recipe-item__name"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>New recipe</span>
+          </button>
+        </li>
+      </ul>
+      <p class="recipe-list__empty" id="recipe-list-empty" hidden>No saved recipes yet. Save the current one to keep it.</p>
+    </div>
+    <div class="sheet__actions">
+      <button type="button" class="btn btn--primary" id="recipe-save">Save</button>
+      <button type="button" class="btn btn--ghost" id="recipe-save-as">Save as…</button>
+      <button type="button" class="btn btn--ghost" id="recipe-rename">Rename</button>
+      <button type="button" class="btn btn--ghost btn--danger" id="recipe-delete">Delete</button>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="name-dialog" aria-labelledby="name-dialog-title">
+    <form method="dialog" class="modal__form" id="name-form" novalidate>
+      <h2 class="modal__title" id="name-dialog-title">Save recipe</h2>
+      <div class="field">
+        <label class="field__label" for="recipe-name">Name</label>
+        <div class="field__control">
+          <input class="field__input" id="recipe-name" type="text" maxlength="60" autocomplete="off" enterkeyhint="done" aria-describedby="recipe-name-error">
+        </div>
+        <div class="field__hint">
+          <p class="field__error" id="recipe-name-error"></p>
+        </div>
+      </div>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost" id="name-cancel">Cancel</button>
+        <button type="submit" class="btn btn--primary" value="ok" id="name-ok">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal modal--confirm" id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+    <form method="dialog" class="modal__form">
+      <h2 class="modal__title" id="confirm-title"></h2>
+      <p class="modal__message" id="confirm-message"></p>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost" id="confirm-cancel" autofocus>Cancel</button>
+        <button type="submit" class="btn btn--danger" value="ok" id="confirm-ok"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="update-pill" id="update-pill" role="status" hidden>
+    <span class="update-pill__text" id="update-pill-text"></span>
+    <button type="button" class="update-pill__btn" id="update-reload">Reload</button>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
-

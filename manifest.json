@@ -1,38 +1,20 @@
 {
+  "id": "./",
+  "name": "Rise – Sourdough Calculator",
   "short_name": "Rise",
-  "name": "Rise - Sourdough Calculator",
-  "id": "/rise-sourdough-app/",
-  "description": "Sourdough bread calculator with baker's percentages. Calculate perfect ingredient ratios for total batch or per-unit baking.",
-  "icons": [
-    {
-      "src": "icons/icon-192x192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "icons/icon-512x512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    },
-    {
-      "src": "icons/icon-192x192.png",
-      "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-512x512.png",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
-    }
-  ],
-  "start_url": "/rise-sourdough-app/",
+  "description": "Sourdough calculator built on baker's percentages. Total batch or per-unit weights, levain hydration, flour mix, inclusions, saved recipes and share-by-link. Works offline.",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#f9fafb",
   "orientation": "portrait-primary",
-  "scope": "/rise-sourdough-app/",
-  "lang": "en-US",
-  "categories": ["food", "utilities", "productivity"]
+  "background_color": "#f4f4f2",
+  "theme_color": "#f4f4f2",
+  "lang": "en",
+  "categories": ["food", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-maskable-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
 }
