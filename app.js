@@ -1,6 +1,6 @@
 // Rise – DOM wiring. All calculation, validation, storage and sharing logic
 // lives in the pure modules; this file only moves data between them and the page.
-import { DEFAULT_VALUES, calculate, round1, formatGrams } from './calc.js';
+import { DEFAULT_VALUES, calculate, displayRows, round1, formatGrams } from './calc.js';
 import { applyEdit, counterpartFields, draftFromValues } from './sync.js';
 import { RULES, FIELDS_FOR_MODE, parseNumber, validateField, validate, crossFieldOk, cleanName } from './validation.js';
 import {
@@ -283,18 +283,19 @@ function renderResults() {
   const v = state.values;
   const valid = state.validation.valid;
 
-  out.totalFlour.textContent = r.totalFlour.toFixed(0);
+  const d = displayRows(r);
+  out.totalFlour.textContent = String(d.totalFlour);
   out.hydration.textContent = r.hydration.toFixed(1);
   out.pff.textContent = r.prefermentedFlourPct.toFixed(1);
-  out.mainFlour.textContent = formatGrams(r.mainFlour);
-  out.whiteFlour.textContent = formatGrams(r.whiteFlour);
-  out.otherFlours.textContent = formatGrams(r.otherFlours);
-  out.mainWater.textContent = formatGrams(r.mainWater);
-  out.salt.textContent = formatGrams(r.salt, 1);
-  out.levain.textContent = formatGrams(r.levain);
-  out.inclusions.textContent = formatGrams(r.inclusions);
-  out.levainFlour.textContent = formatGrams(r.levainFlour);
-  out.levainWater.textContent = formatGrams(r.levainWater);
+  out.mainFlour.textContent = formatGrams(d.mainFlour);
+  out.whiteFlour.textContent = formatGrams(d.whiteFlour);
+  out.otherFlours.textContent = formatGrams(d.otherFlours);
+  out.mainWater.textContent = formatGrams(d.mainWater);
+  out.salt.textContent = formatGrams(d.salt, 1);
+  out.levain.textContent = formatGrams(d.levain);
+  out.inclusions.textContent = formatGrams(d.inclusions);
+  out.levainFlour.textContent = formatGrams(d.levainFlour);
+  out.levainWater.textContent = formatGrams(d.levainWater);
   els.otherFlours.textContent = trimNumber(r.otherFlourPct);
 
   els.caption.textContent = state.mode === 'unit' && v.quantity > 1

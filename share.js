@@ -1,6 +1,6 @@
 // Share-by-link: a recipe encoded into the URL hash, plus a bundle format used
 // to move a whole library between origins. Pure: no DOM.
-import { formatGrams, formatPct } from './calc.js';
+import { displayRows, formatGrams, formatPct } from './calc.js';
 import { sanitizeValues, crossFieldOk, cleanName, VALUE_FIELDS } from './validation.js';
 
 export const SHARE_VERSION = 1;
@@ -153,26 +153,27 @@ export function parseBundleHash(hash) {
 
 export function formatRecipeText({ name, values, mode }, result, url) {
   const g = (x, d = 0) => formatGrams(x, d);
+  const rows = displayRows(result);
   const lines = [
     cleanName(name, 'Sourdough recipe'),
-    `Total flour ${g(result.totalFlour)} · Hydration ${formatPct(result.hydration)} · Prefermented flour ${formatPct(result.prefermentedFlourPct)}`
+    `Total flour ${g(rows.totalFlour)} · Hydration ${formatPct(result.hydration)} · Prefermented flour ${formatPct(result.prefermentedFlourPct)}`
   ];
   if (mode === 'unit' && values.quantity > 1) {
     lines.push(`Makes ${values.quantity} × ${g(values.totalWeight / values.quantity)}`);
   }
   lines.push(
     '',
-    `Flour: ${g(result.mainFlour)}`,
-    `  White: ${g(result.whiteFlour)}`,
-    `  Other: ${g(result.otherFlours)}`,
-    `Water: ${g(result.mainWater)}`,
-    `Salt: ${g(result.salt, 1)}`,
-    `Levain: ${g(result.levain)}`,
-    `Inclusions: ${g(result.inclusions)}`,
+    `Flour: ${g(rows.mainFlour)}`,
+    `  White: ${g(rows.whiteFlour)}`,
+    `  Other: ${g(rows.otherFlours)}`,
+    `Water: ${g(rows.mainWater)}`,
+    `Salt: ${g(rows.salt, 1)}`,
+    `Levain: ${g(rows.levain)}`,
+    `Inclusions: ${g(rows.inclusions)}`,
     '',
     'Levain build',
-    `  Flour: ${g(result.levainFlour)}`,
-    `  Water: ${g(result.levainWater)}`,
+    `  Flour: ${g(rows.levainFlour)}`,
+    `  Water: ${g(rows.levainWater)}`,
     '',
     `Formula: water ${values.waterPct} %, salt ${values.saltPct} %, levain ${values.levainPct} % at ${values.levainHydrationPct} % hydration, white flour ${values.whiteFlourPct} %`
   );

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULT_VALUES, calculate, round1, formatGrams, formatPct } from '../calc.js';
+import { DEFAULT_VALUES, calculate, displayRows, round1, formatGrams, formatPct } from '../calc.js';
 
 const close = (actual, expected, tol = 0.01) =>
   assert.ok(Math.abs(actual - expected) <= tol, `expected ${expected} ± ${tol}, got ${actual}`);
@@ -74,6 +74,43 @@ test('round1 rounds half-up and absorbs float noise', () => {
   assert.equal(round1(187.5), 187.5);
   assert.equal(round1(0.05), 0.1);
   assert.equal(round1(1000), 1000);
+});
+
+test('displayRows reconciles every displayed part with its total', () => {
+  const cases = [
+    DEFAULT_VALUES,
+    { ...DEFAULT_VALUES, totalWeight: 900, waterPct: 80, whiteFlourPct: 90 },
+    { ...DEFAULT_VALUES, totalWeight: 1234, inclusions: 77, waterPct: 66.6, saltPct: 2.2, levainPct: 33.3, levainHydrationPct: 80, whiteFlourPct: 33.3 }
+  ];
+  for (let i = 0; i < 200; i++) {
+    cases.push({
+      totalWeight: 50 + Math.floor(Math.random() * 5000),
+      inclusions: Math.floor(Math.random() * 40),
+      quantity: 1,
+      waterPct: 50 + Math.random() * 70,
+      saltPct: 1 + Math.random() * 2,
+      levainPct: 5 + Math.random() * 45,
+      levainHydrationPct: 50 + Math.random() * 150,
+      whiteFlourPct: Math.random() * 100
+    });
+  }
+  for (const values of cases) {
+    const r = calculate(values);
+    const d = displayRows(r);
+    assert.equal(d.levainFlour + d.levainWater, d.levain);
+    assert.equal(d.whiteFlour + d.otherFlours, d.mainFlour);
+    assert.equal(d.mainFlour + d.levainFlour, d.totalFlour);
+    const listed = d.mainFlour + d.mainWater + d.salt + d.levain + d.inclusions;
+    assert.ok(Math.abs(listed - values.totalWeight) <= 0.55, `list sums to ${listed} for ${values.totalWeight}`);
+    for (const key of Object.keys(d)) {
+      if (key === 'salt') continue;
+      assert.ok(Number.isInteger(d[key]), `${key} should be an integer`);
+    }
+  }
+  // Worked example: levain 87.21 splits 43.6 / 43.6; parts must show as 44 + 43, never 44 + 44.
+  const d = displayRows(calculate(DEFAULT_VALUES));
+  assert.deepEqual([d.levain, d.levainFlour, d.levainWater], [87, 44, 43]);
+  assert.deepEqual([d.totalFlour, d.mainFlour, d.mainWater], [436, 392, 262]);
 });
 
 test('formatters', () => {

@@ -78,6 +78,32 @@ export function calculate(values) {
   };
 }
 
+// Gram figures for display, reconciled so the parts shown add up to the
+// totals shown: levain build = levain, white + other = flour, main + levain
+// flour = total flour, and the ingredient list = dough weight to within the
+// salt's rounding. The parts a baker weighs are rounded first; derived totals
+// follow from them.
+export function displayRows(result) {
+  const mainFlour = Math.round(result.mainFlour);
+  const levainFlour = Math.round(result.levainFlour);
+  const levain = Math.round(result.levain);
+  const whiteFlour = Math.round(result.whiteFlour);
+  const inclusions = Math.round(result.inclusions);
+  const salt = Math.round(result.salt * 10) / 10;
+  return {
+    totalFlour: mainFlour + levainFlour,
+    mainFlour,
+    whiteFlour,
+    otherFlours: mainFlour - whiteFlour,
+    mainWater: Math.round(result.doughWeight - mainFlour - levain - result.salt),
+    salt,
+    levain,
+    levainFlour,
+    levainWater: levain - levainFlour,
+    inclusions
+  };
+}
+
 export function formatGrams(x, decimals = 0) {
   return `${x.toFixed(decimals)} g`;
 }
