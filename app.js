@@ -8,6 +8,7 @@ import {
 } from './recipes.js';
 import { buildShareUrl, parseShareHash, formatRecipeText, buildBundleUrl, parseBundleHash } from './share.js';
 import { initCloud, authMessage } from './cloud.js';
+import { TIMER_PRESETS, isAndroid, formatDuration, buildTimerIntentUrl, parseMinutes } from './timer.js';
 
 const APP_VERSION = document.documentElement.dataset.appVersion || '';
 const TOUCH_DELAY_MS = 600;
@@ -102,7 +103,15 @@ const els = {
   shareDismiss: $('share-dismiss'),
   movedBanner: $('moved-banner'),
   movedExport: $('moved-export'),
-  movedDismiss: $('moved-dismiss')
+  movedDismiss: $('moved-dismiss'),
+  timerOpen: $('timer-open'),
+  timerSheet: $('timer-sheet'),
+  timerSheetClose: $('timer-sheet-close'),
+  timerPresets: $('timer-presets'),
+  timerForm: $('timer-form'),
+  timerMinutes: $('timer-minutes'),
+  timerMinutesError: $('timer-minutes-error'),
+  timerLabel: $('timer-label')
 };
 
 const out = {
@@ -182,7 +191,9 @@ async function init() {
 
   await handleShareHash();
   await handleBundleHash();
+  handleTimerHash();
   renderMovedBanner();
+  initTimer();
 
   if (store.persistFailed) toast('Changes will not be saved on this device');
 
@@ -766,6 +777,63 @@ async function exportToNewHome() {
   window.location.assign(url);
 }
 
+// --- system timer (Android) -------------------------------------------------------
+
+function initTimer() {
+  if (!isAndroid(navigator)) return;
+  els.timerOpen.hidden = false;
+
+  for (const preset of TIMER_PRESETS) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'preset';
+    button.dataset.minutes = String(preset.minutes);
+    button.dataset.label = preset.label;
+    const name = document.createElement('span');
+    name.className = 'preset__name';
+    name.textContent = preset.label;
+    const time = document.createElement('span');
+    time.className = 'preset__time';
+    time.textContent = formatDuration(preset.minutes);
+    button.append(name, time);
+    els.timerPresets.append(button);
+  }
+}
+
+function openTimerSheet() {
+  els.timerMinutes.value = '';
+  els.timerLabel.value = '';
+  setTimerError('');
+  els.timerSheet.showModal();
+  document.documentElement.classList.add('is-locked');
+  els.timerSheetClose.focus();
+}
+
+function closeTimerSheet() {
+  if (els.timerSheet.open) els.timerSheet.close();
+}
+
+function setTimerError(message) {
+  els.timerMinutesError.textContent = message;
+  els.timerMinutes.closest('.field').classList.toggle('is-invalid', message !== '');
+}
+
+// Hands the timer to the Clock app. Chrome only follows intent links from a
+// user gesture, so this runs directly inside click and submit handlers.
+function startSystemTimer(minutes, label) {
+  const fallbackUrl = `${baseUrl()}#t=unsupported`;
+  closeTimerSheet();
+  toast(`${formatDuration(minutes)} timer sent to your clock`);
+  window.location.href = buildTimerIntentUrl({ minutes, label, fallbackUrl });
+}
+
+// Chrome lands here when no app could take the timer intent.
+function handleTimerHash() {
+  if (window.location.hash !== '#t=unsupported') return;
+  stripHash();
+  toast('No clock app on this phone can take a timer');
+}
+
 // --- cloud sync -----------------------------------------------------------------
 
 async function startCloud() {
@@ -1093,6 +1161,30 @@ function wireEvents() {
 
   els.menuSignin.addEventListener('click', signIn);
   els.menuSignout.addEventListener('click', signOut);
+
+  els.timerOpen.addEventListener('click', openTimerSheet);
+  els.timerSheetClose.addEventListener('click', closeTimerSheet);
+  els.timerSheet.addEventListener('click', (e) => {
+    if (e.target === els.timerSheet) closeTimerSheet();
+  });
+  els.timerSheet.addEventListener('close', () => {
+    document.documentElement.classList.remove('is-locked');
+  });
+  els.timerPresets.addEventListener('click', (e) => {
+    const button = e.target.closest ? e.target.closest('button.preset') : null;
+    if (button) startSystemTimer(Number(button.dataset.minutes), button.dataset.label);
+  });
+  els.timerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const minutes = parseMinutes(els.timerMinutes.value);
+    if (minutes === null) {
+      setTimerError('Whole minutes, 1–720');
+      els.timerMinutes.focus();
+      return;
+    }
+    startSystemTimer(minutes, els.timerLabel.value);
+  });
+  els.timerMinutes.addEventListener('input', () => setTimerError(''));
 
   els.print.addEventListener('click', () => {
     closeMenu();
