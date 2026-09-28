@@ -5,7 +5,7 @@
 // shows an "Update ready" pill and only then does the worker take over, so
 // nothing reloads under someone mid-recipe.
 
-const VERSION = '2026.09.28-5';
+const VERSION = '2026.09.28-6';
 const SDK_VERSION = '12.19.0'; // Firebase modular SDK; runtime-cached in Phase 2
 const SHELL_CACHE = `rise-shell-${VERSION}`;
 const SDK_CACHE = `rise-sdk-${SDK_VERSION}`;
@@ -27,7 +27,6 @@ const PRECACHE = [
   './recipes.js',
   './share.js',
   './cloud.js',
-  './timer.js',
   './fonts/inter-variable.woff2',
   './fonts/fraunces-variable.woff2',
   './icons/icon.svg',

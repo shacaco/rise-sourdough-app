@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-app-version="2026.09.28-5">
+<html lang="en" data-app-version="2026.09.28-6">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -86,7 +86,6 @@
     <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
     <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
-    <symbol id="i-timer" viewBox="0 0 24 24"><path d="M10 2h4"/><path d="M12 14v-4"/><circle cx="12" cy="14" r="8"/></symbol>
     <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
     <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
     <symbol id="i-wake" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2"/><circle cx="12" cy="10" r="2.5"/><path d="M12 5.5v1"/><path d="M12 13.5v1"/><path d="M7.5 10h1"/><path d="M15.5 10h1"/><path d="M12 18h.01"/></symbol>
@@ -301,9 +300,6 @@
           <button type="button" class="btn btn--ghost btn--sm" id="share-recipe" title="Share this recipe as a link">
             <svg class="icon icon--sm" aria-hidden="true"><use href="#i-share"/></svg><span>Share</span>
           </button>
-          <button type="button" class="btn btn--ghost btn--sm" id="timer-open" title="Start a timer on this phone" aria-haspopup="dialog" aria-controls="timer-sheet" hidden>
-            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-timer"/></svg><span>Timer</span>
-          </button>
         </div>
       </div>
 
@@ -392,41 +388,6 @@
       <button type="button" class="btn btn--ghost" id="recipe-save-as">Save as…</button>
       <button type="button" class="btn btn--ghost" id="recipe-rename">Rename</button>
       <button type="button" class="btn btn--ghost btn--danger" id="recipe-delete">Delete</button>
-    </div>
-  </dialog>
-
-  <dialog class="sheet" id="timer-sheet" aria-labelledby="timer-sheet-title">
-    <div class="sheet__handle" aria-hidden="true"></div>
-    <div class="sheet__head">
-      <h2 class="sheet__title" id="timer-sheet-title">Timer</h2>
-      <button type="button" class="icon-btn" id="timer-sheet-close" aria-label="Close">
-        <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
-      </button>
-    </div>
-    <div class="sheet__body">
-      <p class="sheet__hint">Starts a timer in your phone's Clock app. It rings even when Rise is closed.</p>
-      <div class="preset-grid" id="timer-presets"></div>
-      <form class="timer-custom" id="timer-form" novalidate>
-        <div class="field">
-          <label class="field__label" for="timer-minutes">Minutes</label>
-          <div class="field__control">
-            <input class="field__input" id="timer-minutes" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="done" aria-describedby="timer-minutes-error">
-            <span class="field__unit" aria-hidden="true">min</span>
-          </div>
-          <div class="field__hint">
-            <p class="field__help">1–720</p>
-            <p class="field__error" id="timer-minutes-error"></p>
-          </div>
-        </div>
-        <div class="field">
-          <label class="field__label" for="timer-label">Label</label>
-          <div class="field__control">
-            <input class="field__input" id="timer-label" type="text" maxlength="40" autocomplete="off" enterkeyhint="done" placeholder="Rise timer">
-          </div>
-          <div class="field__hint"></div>
-        </div>
-        <button type="submit" class="btn btn--primary timer-custom__start" id="timer-start">Start timer</button>
-      </form>
     </div>
   </dialog>
 
