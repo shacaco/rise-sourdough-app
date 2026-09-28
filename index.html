@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-app-version="2026.09.28-3">
+<html lang="en" data-app-version="2026.09.28-4">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -86,6 +86,8 @@
     <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
     <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
     <symbol id="i-wake" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2"/><circle cx="12" cy="10" r="2.5"/><path d="M12 5.5v1"/><path d="M12 13.5v1"/><path d="M7.5 10h1"/><path d="M15.5 10h1"/><path d="M12 18h.01"/></symbol>
   </svg>
 
@@ -114,6 +116,14 @@
   <main id="main" class="layout">
     <form id="calc-form" class="inputs" novalidate autocomplete="off" aria-labelledby="inputs-title">
       <h2 id="inputs-title" class="sr-only">Recipe inputs</h2>
+
+      <div class="banner" id="moved-banner" role="status" hidden>
+        <p class="banner__text">Rise has a new home. Move your recipes to the new app and add it to your home screen from there.</p>
+        <div class="banner__actions">
+          <button type="button" class="btn btn--primary btn--sm" id="moved-export">Move my recipes</button>
+          <button type="button" class="btn btn--ghost btn--sm" id="moved-dismiss">Later</button>
+        </div>
+      </div>
 
       <div class="banner" id="share-banner" role="status" hidden>
         <p class="banner__text" id="share-banner-text"></p>
@@ -346,7 +356,12 @@
     </fieldset>
     <div class="menu__divider" role="separator"></div>
     <button type="button" class="menu__item" id="menu-print"><svg class="icon" aria-hidden="true"><use href="#i-print"/></svg>Print recipe</button>
-    <button type="button" class="menu__item" id="menu-signin" hidden>Sign in</button>
+    <button type="button" class="menu__item" id="menu-signin" hidden><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>Sign in to sync</button>
+    <div class="menu__account" id="menu-account" hidden>
+      <p class="menu__label">Syncing as</p>
+      <p class="menu__account-name" id="menu-account-name"></p>
+      <button type="button" class="menu__item" id="menu-signout"><svg class="icon" aria-hidden="true"><use href="#i-logout"/></svg>Sign out</button>
+    </div>
     <p class="menu__meta" id="app-version"></p>
   </div>
 

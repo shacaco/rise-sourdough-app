@@ -5,7 +5,7 @@
 // shows an "Update ready" pill and only then does the worker take over, so
 // nothing reloads under someone mid-recipe.
 
-const VERSION = '2026.09.28-3';
+const VERSION = '2026.09.28-4';
 const SDK_VERSION = '12.19.0'; // Firebase modular SDK; runtime-cached in Phase 2
 const SHELL_CACHE = `rise-shell-${VERSION}`;
 const SDK_CACHE = `rise-sdk-${SDK_VERSION}`;
@@ -26,6 +26,7 @@ const PRECACHE = [
   './validation.js',
   './recipes.js',
   './share.js',
+  './cloud.js',
   './fonts/inter-variable.woff2',
   './fonts/fraunces-variable.woff2',
   './icons/icon.svg',
@@ -39,7 +40,7 @@ const PRECACHE = [
 ];
 
 // Files that may legitimately be absent (added one by one, failures ignored).
-const OPTIONAL_PRECACHE = [];
+const OPTIONAL_PRECACHE = ['./firebase-config.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {

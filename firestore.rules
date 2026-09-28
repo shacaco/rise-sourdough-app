@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+    function validRecipe(d) {
+      return d.keys().hasOnly(['name', 'values', 'mode', 'createdAt', 'updatedAt', 'deleted'])
+        && d.name is string && d.name.size() >= 1 && d.name.size() <= 60
+        && d.mode in ['batch', 'unit']
+        && d.values is map && d.values.size() == 8
+        && d.createdAt is number && d.updatedAt is number
+        && (!('deleted' in d) || d.deleted == true);
+    }
+    match /users/{uid}/recipes/{recipeId} {
+      allow read, delete: if isOwner(uid);
+      allow create: if isOwner(uid) && validRecipe(request.resource.data);
+      // Stale writes from a device that was offline must not clobber newer data.
+      allow update: if isOwner(uid) && validRecipe(request.resource.data)
+        && request.resource.data.updatedAt >= resource.data.updatedAt;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

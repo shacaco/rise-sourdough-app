@@ -6,11 +6,18 @@ import { RULES, FIELDS_FOR_MODE, parseNumber, validateField, validate, crossFiel
 import {
   RECIPES_KEY, THEME_KEY, createRecipe, isDirty, createLocalStore, loadWorkingState, saveWorkingState
 } from './recipes.js';
-import { buildShareUrl, parseShareHash, formatRecipeText } from './share.js';
+import { buildShareUrl, parseShareHash, formatRecipeText, buildBundleUrl, parseBundleHash } from './share.js';
+import { initCloud, authMessage } from './cloud.js';
 
 const APP_VERSION = document.documentElement.dataset.appVersion || '';
 const TOUCH_DELAY_MS = 600;
 const THEME_COLORS = { light: '#f4f4f2', dark: '#121312' };
+
+// The app is moving from GitHub Pages to Firebase Hosting. On the old host a
+// banner offers to carry the local library over as a bundle link.
+const NEW_HOME_URL = 'https://rise-sourdough.web.app/';
+const OLD_HOST = 'shacaco.github.io';
+const MOVED_DISMISSED_KEY = 'rise-moved-dismissed';
 
 const $ = (id) => document.getElementById(id);
 
@@ -80,6 +87,10 @@ const els = {
   menuBtn: $('menu-btn'),
   print: $('menu-print'),
   version: $('app-version'),
+  menuSignin: $('menu-signin'),
+  menuAccount: $('menu-account'),
+  menuAccountName: $('menu-account-name'),
+  menuSignout: $('menu-signout'),
   wake: $('wake-lock'),
   copy: $('copy-recipe'),
   copyLabel: $('copy-recipe-label'),
@@ -88,7 +99,10 @@ const els = {
   bannerText: $('share-banner-text'),
   shareOpen: $('share-open'),
   shareSave: $('share-save'),
-  shareDismiss: $('share-dismiss')
+  shareDismiss: $('share-dismiss'),
+  movedBanner: $('moved-banner'),
+  movedExport: $('moved-export'),
+  movedDismiss: $('moved-dismiss')
 };
 
 const out = {
@@ -132,7 +146,9 @@ const state = {
   pendingShare: null
 };
 
-let store;
+let localStore;
+let store; // the local store, or the cloud-backed store while signed in
+let cloud = null;
 const touchTimers = new Map();
 
 // --- boot ---------------------------------------------------------------------
@@ -142,7 +158,8 @@ initTheme();
 init();
 
 async function init() {
-  store = createLocalStore({ storage });
+  localStore = createLocalStore({ storage });
+  store = localStore;
 
   const saved = loadWorkingState(storage);
   if (saved) {
@@ -155,10 +172,7 @@ async function init() {
   state.result = calculate(state.values);
 
   state.recipes = await store.list();
-  store.subscribe((list) => {
-    state.recipes = list;
-    renderRecipeList();
-  });
+  store.subscribe(onRecipesChanged);
 
   applyMode(state.mode);
   wireEvents();
@@ -167,8 +181,12 @@ async function init() {
   els.version.textContent = APP_VERSION ? `Rise ${APP_VERSION}` : 'Rise';
 
   await handleShareHash();
+  await handleBundleHash();
+  renderMovedBanner();
 
   if (store.persistFailed) toast('Changes will not be saved on this device');
+
+  startCloud();
 }
 
 // --- mode and draft -------------------------------------------------------------
@@ -382,6 +400,49 @@ function renderRecipeList() {
   els.listEmpty.hidden = state.recipes.length > 0;
 }
 
+function renderAccount(user) {
+  els.menuSignin.hidden = Boolean(user);
+  els.menuAccount.hidden = !user;
+  els.menuAccountName.textContent = user ? (user.email || user.displayName || 'Google account') : '';
+}
+
+function renderMovedBanner() {
+  let dismissed = false;
+  try { dismissed = storage.getItem(MOVED_DISMISSED_KEY) === '1'; } catch { /* ignore */ }
+  els.movedBanner.hidden = !(window.location.hostname === OLD_HOST && !dismissed);
+}
+
+// The library changed (this tab, another tab, or another device via sync).
+function onRecipesChanged(list) {
+  state.recipes = list;
+  renderRecipeList();
+  if (!state.activeRecipe) return;
+
+  const latest = list.find((r) => r.id === state.activeRecipeId);
+  if (!latest) {
+    state.activeRecipe = null;
+    state.activeRecipeId = null;
+    renderChip();
+    persistState();
+    toast('This recipe was deleted on another device');
+    return;
+  }
+  if (latest.updatedAt <= state.activeRecipe.updatedAt && latest.name === state.activeRecipe.name) return;
+
+  const hadLocalEdits = currentlyDirty();
+  const valuesChanged = isDirty(latest, state.values, state.mode);
+  state.activeRecipe = latest;
+  if (valuesChanged && !hadLocalEdits) {
+    state.values = { ...latest.values };
+    state.touched = new Set();
+    state.result = calculate(state.values);
+    applyMode(latest.mode, { persist: true });
+    toast('Updated from another device');
+  } else {
+    renderChip();
+  }
+}
+
 // --- dialogs and toast --------------------------------------------------------
 
 function promptName({ title, initial = '', okLabel = 'Save' }) {
@@ -490,6 +551,17 @@ function loadValues(values, mode, recipe, draftName = null) {
   applyMode(mode, { persist: true });
 }
 
+// Stores `record` as the active recipe. The active record is set before the
+// store call so the library listener sees no "remote" change.
+async function storeActive(record) {
+  state.activeRecipe = record;
+  state.activeRecipeId = record.id;
+  state.draftName = null;
+  await store.put(record);
+  renderChip();
+  persistState();
+}
+
 // Saves the current values under `name`, replacing an existing recipe of that
 // name when the user agrees. Returns the stored record or null.
 async function saveCurrentAs(name) {
@@ -509,12 +581,7 @@ async function saveCurrentAs(name) {
   } else {
     record = createRecipe({ name, values: state.values, mode: state.mode });
   }
-  await store.put(record);
-  state.activeRecipe = record;
-  state.activeRecipeId = record.id;
-  state.draftName = null;
-  renderChip();
-  persistState();
+  await storeActive(record);
   toast('Saved');
   return record;
 }
@@ -522,10 +589,7 @@ async function saveCurrentAs(name) {
 async function saveRecipe() {
   if (state.activeRecipe) {
     const updated = { ...state.activeRecipe, values: { ...state.values }, mode: state.mode, updatedAt: Date.now() };
-    await store.put(updated);
-    state.activeRecipe = updated;
-    renderChip();
-    persistState();
+    await storeActive(updated);
     closeSheet();
     toast('Saved');
     return;
@@ -552,10 +616,7 @@ async function renameRecipe() {
     toast('A recipe with that name already exists');
     return;
   }
-  const updated = { ...active, name, updatedAt: Date.now() };
-  await store.put(updated);
-  state.activeRecipe = updated;
-  renderChip();
+  await storeActive({ ...active, name, updatedAt: Date.now() });
   toast('Renamed');
 }
 
@@ -569,9 +630,9 @@ async function deleteRecipe() {
     danger: true
   });
   if (!ok) return;
-  await store.remove(active.id);
   state.activeRecipe = null;
   state.activeRecipeId = null;
+  await store.remove(active.id);
   renderChip();
   persistState();
   closeSheet();
@@ -594,10 +655,10 @@ async function newRecipe() {
   closeSheet();
 }
 
-// --- share and copy -----------------------------------------------------------
+// --- share, copy, bundles -------------------------------------------------------
 
 function baseUrl() {
-  return `${location.origin}${location.pathname}`;
+  return `${window.location.origin}${window.location.pathname}`;
 }
 
 async function shareRecipe() {
@@ -642,11 +703,15 @@ function hideShareBanner() {
   state.pendingShare = null;
 }
 
+function stripHash() {
+  history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+}
+
 async function handleShareHash() {
-  const parsed = parseShareHash(location.hash);
+  const parsed = parseShareHash(window.location.hash);
   if (!parsed) return;
   // Strip the hash so reloads and re-shares never re-trigger the banner.
-  history.replaceState(null, '', `${location.pathname}${location.search}`);
+  stripHash();
   if (!parsed.ok) {
     toast('This link is not a valid Rise recipe');
     return;
@@ -665,6 +730,73 @@ function openSharedRecipe() {
   loadValues(shared.values, shared.mode, null, shared.name);
   els.shareOpen.hidden = true;
   els.shareSave.hidden = false;
+}
+
+// A whole library arriving from the old origin: add what is new or newer.
+async function handleBundleHash() {
+  const parsed = parseBundleHash(window.location.hash);
+  if (!parsed) return;
+  stripHash();
+  if (!parsed.ok) {
+    toast('This link is not a valid Rise export');
+    return;
+  }
+  const count = parsed.recipes.length;
+  const ok = await confirmDialog({
+    title: `Add ${count} recipe${count === 1 ? '' : 's'}?`,
+    message: 'They come from your previous Rise app. Recipes you already have with newer changes are kept as they are.',
+    confirmLabel: 'Add',
+    danger: false
+  });
+  if (!ok) return;
+  const existing = new Map((await store.all()).map((r) => [r.id, r]));
+  let added = 0;
+  for (const record of parsed.recipes) {
+    const mine = existing.get(record.id);
+    if (mine && mine.updatedAt >= record.updatedAt) continue;
+    await store.put(record);
+    added += 1;
+  }
+  toast(added ? `Added ${added} recipe${added === 1 ? '' : 's'}` : 'Nothing new to add');
+}
+
+async function exportToNewHome() {
+  const records = await store.list();
+  const url = records.length ? buildBundleUrl(NEW_HOME_URL, records) : NEW_HOME_URL;
+  window.location.assign(url);
+}
+
+// --- cloud sync -----------------------------------------------------------------
+
+async function startCloud() {
+  cloud = await initCloud({
+    localStore,
+    onUser: (user, cloudStore) => {
+      store = user && cloudStore ? cloudStore : localStore;
+      renderAccount(user);
+    },
+    onError: (message) => toast(message)
+  });
+  if (!cloud) return;
+  els.menuSignin.hidden = false;
+}
+
+async function signIn() {
+  closeMenu();
+  if (!cloud) return;
+  try {
+    await cloud.signIn();
+  } catch (err) {
+    const message = authMessage(err);
+    if (message) toast(message);
+  }
+}
+
+async function signOut() {
+  closeMenu();
+  if (!cloud) return;
+  await cloud.signOut();
+  toast('Signed out. Your recipes stay on this device.');
 }
 
 // --- theme --------------------------------------------------------------------
@@ -948,7 +1080,19 @@ function wireEvents() {
     if (await saveCurrentAs(name)) hideShareBanner();
   });
   els.shareDismiss.addEventListener('click', hideShareBanner);
-  window.addEventListener('hashchange', handleShareHash);
+  window.addEventListener('hashchange', () => {
+    handleShareHash();
+    handleBundleHash();
+  });
+
+  els.movedExport.addEventListener('click', exportToNewHome);
+  els.movedDismiss.addEventListener('click', () => {
+    try { storage.setItem(MOVED_DISMISSED_KEY, '1'); } catch { /* ignore */ }
+    els.movedBanner.hidden = true;
+  });
+
+  els.menuSignin.addEventListener('click', signIn);
+  els.menuSignout.addEventListener('click', signOut);
 
   els.print.addEventListener('click', () => {
     closeMenu();
@@ -957,6 +1101,6 @@ function wireEvents() {
 
   // Another tab changed the library.
   window.addEventListener('storage', (e) => {
-    if (e.key === RECIPES_KEY && store) store.reload();
+    if (e.key === RECIPES_KEY && localStore) localStore.reload();
   });
 }

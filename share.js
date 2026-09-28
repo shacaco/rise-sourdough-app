@@ -1,10 +1,13 @@
-// Share-by-link: a recipe encoded into the URL hash. Pure: no DOM.
+// Share-by-link: a recipe encoded into the URL hash, plus a bundle format used
+// to move a whole library between origins. Pure: no DOM.
 import { formatGrams, formatPct } from './calc.js';
 import { sanitizeValues, crossFieldOk, cleanName, VALUE_FIELDS } from './validation.js';
 
 export const SHARE_VERSION = 1;
 export const SHARE_PARAM = 'r';
+export const BUNDLE_PARAM = 'b';
 export const MAX_PAYLOAD = 2000;
+export const MAX_BUNDLE = 50000;
 
 // Compact JSON keys keep the link short (~140 chars for a typical recipe).
 const KEY_MAP = Object.freeze({
@@ -19,6 +22,7 @@ const KEY_MAP = Object.freeze({
 });
 
 const B64URL = /^[A-Za-z0-9_-]+$/;
+const ID_RE = /^[A-Za-z0-9-]{1,64}$/;
 
 function toBase64Url(text) {
   const bytes = new TextEncoder().encode(text);
@@ -34,56 +38,61 @@ function fromBase64Url(s) {
   return new TextDecoder().decode(bytes);
 }
 
-export function encodeRecipe({ name, values, mode }) {
-  const payload = {
-    v: SHARE_VERSION,
-    n: cleanName(name, 'Shared recipe'),
-    m: mode === 'unit' ? 'u' : 'b'
-  };
-  for (const [field, key] of Object.entries(KEY_MAP)) {
-    // toFixed(3) strips float noise; the unary plus turns it back into a number.
-    payload[key] = +Number(values[field]).toFixed(3);
-  }
-  return toBase64Url(JSON.stringify(payload));
-}
-
-export function decodeRecipe(payload) {
+function parsePayload(payload, max) {
   if (typeof payload !== 'string' || payload.length === 0) return { ok: false, reason: 'malformed' };
-  if (payload.length > MAX_PAYLOAD) return { ok: false, reason: 'too-long' };
+  if (payload.length > max) return { ok: false, reason: 'too-long' };
   if (!B64URL.test(payload)) return { ok: false, reason: 'malformed' };
-
   let parsed;
   try {
     parsed = JSON.parse(fromBase64Url(payload));
   } catch {
     return { ok: false, reason: 'malformed' };
   }
-  if (!parsed || typeof parsed !== 'object') return { ok: false, reason: 'malformed' };
-  if (parsed.v !== SHARE_VERSION) return { ok: false, reason: 'version' };
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return { ok: false, reason: 'malformed' };
+  return { ok: true, parsed };
+}
 
+function pack({ name, values, mode }, fallbackName) {
+  const out = { n: cleanName(name, fallbackName), m: mode === 'unit' ? 'u' : 'b' };
+  for (const [field, key] of Object.entries(KEY_MAP)) {
+    // toFixed(3) strips float noise; the unary plus turns it back into a number.
+    out[key] = +Number(values[field]).toFixed(3);
+  }
+  return out;
+}
+
+// Shared data is never silently clamped: if sanitising changes anything,
+// the entry is rejected outright.
+function unpack(o, fallbackName) {
+  if (!o || typeof o !== 'object') return { ok: false, reason: 'malformed' };
   const partial = {};
   for (const [field, key] of Object.entries(KEY_MAP)) {
-    const n = parsed[key];
+    const n = o[key];
     if (typeof n !== 'number' || !Number.isFinite(n)) return { ok: false, reason: 'malformed' };
     partial[field] = n;
   }
-
-  // Shared data is never silently clamped: if sanitising changes anything,
-  // the link is rejected outright.
   const values = sanitizeValues(partial);
   for (const field of VALUE_FIELDS) {
     if (values[field] !== partial[field]) return { ok: false, reason: 'out-of-range' };
   }
   if (!crossFieldOk(values)) return { ok: false, reason: 'out-of-range' };
-
   return {
     ok: true,
-    recipe: {
-      name: cleanName(parsed.n, 'Shared recipe'),
-      values,
-      mode: parsed.m === 'u' ? 'unit' : 'batch'
-    }
+    recipe: { name: cleanName(o.n, fallbackName), values, mode: o.m === 'u' ? 'unit' : 'batch' }
   };
+}
+
+// --- single recipe --------------------------------------------------------------
+
+export function encodeRecipe(recipe) {
+  return toBase64Url(JSON.stringify({ v: SHARE_VERSION, ...pack(recipe, 'Shared recipe') }));
+}
+
+export function decodeRecipe(payload) {
+  const result = parsePayload(payload, MAX_PAYLOAD);
+  if (!result.ok) return result;
+  if (result.parsed.v !== SHARE_VERSION) return { ok: false, reason: 'version' };
+  return unpack(result.parsed, 'Shared recipe');
 }
 
 export function buildShareUrl(baseUrl, recipe) {
@@ -98,7 +107,50 @@ export function parseShareHash(hash) {
   return decodeRecipe(match[1]);
 }
 
-// Plain-text ingredient list for the clipboard.
+// --- library bundle (moving between origins) --------------------------------------
+
+export function encodeBundle(records) {
+  const entries = records
+    .filter((r) => r && !r.deleted)
+    .map((r) => ({ ...pack(r, 'Untitled'), id: r.id, c: r.createdAt, u: r.updatedAt }));
+  return toBase64Url(JSON.stringify({ v: SHARE_VERSION, r: entries }));
+}
+
+// Returns { ok: true, recipes: Recipe[] } with invalid entries skipped, or
+// { ok: false, reason } when nothing usable remains.
+export function decodeBundle(payload) {
+  const result = parsePayload(payload, MAX_BUNDLE);
+  if (!result.ok) return result;
+  const { parsed } = result;
+  if (parsed.v !== SHARE_VERSION) return { ok: false, reason: 'version' };
+  if (!Array.isArray(parsed.r)) return { ok: false, reason: 'malformed' };
+  const recipes = [];
+  for (const entry of parsed.r) {
+    const unpacked = unpack(entry, 'Untitled');
+    if (!unpacked.ok) continue;
+    if (typeof entry.id !== 'string' || !ID_RE.test(entry.id)) continue;
+    const createdAt = Number(entry.c);
+    const updatedAt = Number(entry.u);
+    if (!Number.isFinite(createdAt) || !Number.isFinite(updatedAt)) continue;
+    recipes.push({ id: entry.id, ...unpacked.recipe, createdAt, updatedAt });
+  }
+  if (recipes.length === 0) return { ok: false, reason: 'empty' };
+  return { ok: true, recipes };
+}
+
+export function buildBundleUrl(baseUrl, records) {
+  return `${baseUrl}#${BUNDLE_PARAM}=${encodeBundle(records)}`;
+}
+
+export function parseBundleHash(hash) {
+  if (typeof hash !== 'string') return null;
+  const match = new RegExp(`^#?${BUNDLE_PARAM}=([A-Za-z0-9_-]+)$`).exec(hash);
+  if (!match) return null;
+  return decodeBundle(match[1]);
+}
+
+// --- clipboard text ---------------------------------------------------------------
+
 export function formatRecipeText({ name, values, mode }, result, url) {
   const g = (x, d = 0) => formatGrams(x, d);
   const lines = [
