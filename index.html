@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-app-version="2026.10.02-1">
+<html lang="en" data-app-version="2026.10.02-2">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -315,6 +315,17 @@
         </div>
       </div>
 
+      <div class="batch" id="batch" data-scaled="false" hidden>
+        <div class="batch__text">
+          <p class="batch__size"><span class="sr-only">Batch size: </span><span id="batch-size"></span></p>
+          <p class="batch__note" id="batch-note"></p>
+        </div>
+        <div class="batch__actions">
+          <button type="button" class="btn btn--ghost btn--sm" id="batch-reset" title="Go back to the recipe's own size" hidden>Reset</button>
+          <button type="button" class="btn btn--ghost btn--sm" id="batch-scale" title="Change the size for this bake without editing the recipe">Scale</button>
+        </div>
+      </div>
+
       <p class="results__caption" id="results-caption"></p>
       <p class="results__status" id="results-status" role="status" aria-live="polite" aria-atomic="true"></p>
 
@@ -434,6 +445,53 @@
       <div class="modal__actions">
         <button type="button" class="btn btn--ghost" id="name-cancel">Cancel</button>
         <button type="submit" class="btn btn--primary" value="ok" id="name-ok">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="scale-dialog" aria-labelledby="scale-dialog-title" aria-describedby="scale-dialog-message">
+    <form method="dialog" class="modal__form" id="scale-form" novalidate autocomplete="off">
+      <h2 class="modal__title" id="scale-dialog-title">Batch size</h2>
+      <p class="modal__message" id="scale-dialog-message">For this bake only. The saved recipe stays as it is.</p>
+
+      <div class="field" id="scale-total-field">
+        <label class="field__label" for="scale-total">Total dough weight<span class="sr-only">, grams</span></label>
+        <div class="field__control">
+          <input class="field__input" id="scale-total" type="text" inputmode="decimal" enterkeyhint="done" aria-describedby="scale-total-error">
+          <span class="field__unit" aria-hidden="true">g</span>
+        </div>
+        <div class="field__hint">
+          <p class="field__error" id="scale-total-error"></p>
+        </div>
+      </div>
+
+      <div class="field-grid" id="scale-unit-fields">
+        <div class="field">
+          <label class="field__label" for="scale-quantity">Quantity</label>
+          <div class="field__control">
+            <input class="field__input" id="scale-quantity" type="text" inputmode="numeric" enterkeyhint="done" aria-describedby="scale-quantity-error">
+            <span class="field__unit" aria-hidden="true">units</span>
+          </div>
+          <div class="field__hint">
+            <p class="field__error" id="scale-quantity-error"></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="scale-unit-weight">Unit weight<span class="sr-only">, grams</span></label>
+          <div class="field__control">
+            <input class="field__input" id="scale-unit-weight" type="text" inputmode="decimal" enterkeyhint="done" aria-describedby="scale-unit-weight-error">
+            <span class="field__unit" aria-hidden="true">g</span>
+          </div>
+          <div class="field__hint">
+            <p class="field__error" id="scale-unit-weight-error"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost" id="scale-cancel">Cancel</button>
+        <button type="submit" class="btn btn--primary" value="ok" id="scale-ok">Apply</button>
       </div>
     </form>
   </dialog>

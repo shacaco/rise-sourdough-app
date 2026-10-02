@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { DEFAULT_VALUES } from '../calc.js';
 import {
   RULES, FIELDS_FOR_MODE, PCT_FIELDS, parseNumber, validateField, validate,
-  crossFieldOk, sanitizeValues, cleanName, NAME_MAX
+  crossFieldOk, sanitizeValues, sanitizeScale, cleanName, NAME_MAX
 } from '../validation.js';
 
 const validDraft = () => ({
@@ -104,6 +104,18 @@ test('sanitizeValues repairs field by field and resets impossible inclusions', (
   assert.deepEqual(sanitizeValues(undefined), DEFAULT_VALUES);
   assert.equal(sanitizeValues({ totalWeight: 100, inclusions: 100 }).inclusions, 0);
   assert.deepEqual(sanitizeValues(DEFAULT_VALUES), DEFAULT_VALUES);
+});
+
+test('sanitizeScale keeps a batch size only when both numbers are in range', () => {
+  assert.deepEqual(sanitizeScale({ totalWeight: 1500, quantity: 6 }), { totalWeight: 1500, quantity: 6 });
+  assert.deepEqual(sanitizeScale({ totalWeight: '1500.5', quantity: '6', extra: 1 }), { totalWeight: 1500.5, quantity: 6 });
+  assert.equal(sanitizeScale(null), null);
+  assert.equal(sanitizeScale(undefined), null);
+  assert.equal(sanitizeScale({ totalWeight: 1500 }), null);
+  assert.equal(sanitizeScale({ totalWeight: 10, quantity: 1 }), null);
+  assert.equal(sanitizeScale({ totalWeight: 60000, quantity: 1 }), null);
+  assert.equal(sanitizeScale({ totalWeight: 1500, quantity: 2.5 }), null);
+  assert.equal(sanitizeScale({ totalWeight: 1500, quantity: 101 }), null);
 });
 
 test('cleanName strips controls, collapses whitespace and caps length', () => {

@@ -1,6 +1,6 @@
 // Recipe records and the local store. Pure helpers plus an injectable
 // storage-backed store so it runs in Node tests and in the browser alike.
-import { sanitizeValues, cleanName, VALUE_FIELDS } from './validation.js';
+import { sanitizeValues, sanitizeScale, cleanName, VALUE_FIELDS } from './validation.js';
 
 export const RECIPES_KEY = 'rise-recipes-v2';
 export const STATE_KEY = 'rise-state-v2';
@@ -155,16 +155,19 @@ export function loadWorkingState(storage) {
     version: 2,
     values: sanitizeValues(s.values),
     mode: normalizeMode(s.mode),
-    activeRecipeId: typeof s.activeRecipeId === 'string' ? s.activeRecipeId : null
+    activeRecipeId: typeof s.activeRecipeId === 'string' ? s.activeRecipeId : null,
+    scale: sanitizeScale(s.scale)
   };
 }
 
-export function saveWorkingState(storage, { values, mode, activeRecipeId }) {
+// `scale` is the batch size chosen for the current bake, or null.
+export function saveWorkingState(storage, { values, mode, activeRecipeId, scale }) {
   return writeJson(storage, STATE_KEY, {
     version: 2,
     values,
     mode: normalizeMode(mode),
-    activeRecipeId: activeRecipeId ?? null
+    activeRecipeId: activeRecipeId ?? null,
+    scale: scale ?? null
   });
 }
 

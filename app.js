@@ -1,7 +1,7 @@
 // Rise – DOM wiring. All calculation, validation, storage and sharing logic
 // lives in the pure modules; this file only moves data between them and the page.
 import { DEFAULT_VALUES, calculate, displayRows, round1, formatGrams } from './calc.js';
-import { applyEdit, counterpartFields, draftFromValues } from './sync.js';
+import { applyEdit, counterpartFields, draftFromValues, scaleValues, scaleFromUnits } from './sync.js';
 import { RULES, FIELDS_FOR_MODE, parseNumber, validateField, validate, crossFieldOk, cleanName } from './validation.js';
 import {
   RECIPES_KEY, THEME_KEY, createRecipe, isDirty, createLocalStore, loadWorkingState, saveWorkingState
@@ -108,8 +108,25 @@ const els = {
   editBar: $('edit-bar'),
   editCancel: $('edit-cancel'),
   editDone: $('edit-done'),
-  editSave: $('edit-save')
+  editSave: $('edit-save'),
+  batch: $('batch'),
+  batchSize: $('batch-size'),
+  batchNote: $('batch-note'),
+  batchReset: $('batch-reset'),
+  batchScale: $('batch-scale'),
+  scaleDialog: $('scale-dialog'),
+  scaleForm: $('scale-form'),
+  scaleTotalField: $('scale-total-field'),
+  scaleUnitFields: $('scale-unit-fields'),
+  scaleCancel: $('scale-cancel')
 };
+
+// Inputs of the batch-size dialog, keyed by the rule they are checked against.
+const scaleFields = {};
+for (const [field, id] of [['totalWeight', 'scale-total'], ['quantity', 'scale-quantity'], ['unitWeight', 'scale-unit-weight']]) {
+  const input = $(id);
+  scaleFields[field] = { input, wrapper: input.closest('.field'), error: $(`${id}-error`) };
+}
 
 const sum = {
   dough: $('summary-dough'),
@@ -157,7 +174,8 @@ const state = {
   activeRecipe: null,
   draftName: null, // name of an opened shared recipe before it is saved
   editing: false, // a saved recipe is read-only until Edit is pressed
-  editSnapshot: null, // values and mode when Edit was pressed, for Cancel
+  editSnapshot: null, // values, mode and scale when Edit was pressed, for Cancel
+  scale: null, // batch size for this bake ({ totalWeight, quantity }); never part of the recipe
   recipes: [],
   pendingShare: null
 };
@@ -182,10 +200,13 @@ async function init() {
     state.values = saved.values;
     state.mode = saved.mode;
     state.activeRecipeId = saved.activeRecipeId;
+    state.scale = saved.scale;
   }
   state.activeRecipe = state.activeRecipeId ? await store.get(state.activeRecipeId) : null;
-  if (!state.activeRecipe) state.activeRecipeId = null;
-  state.result = calculate(state.values);
+  if (!state.activeRecipe) {
+    state.activeRecipeId = null;
+    state.scale = null;
+  }
 
   state.recipes = await store.list();
   store.subscribe(onRecipesChanged);
@@ -207,8 +228,15 @@ async function init() {
 
 // --- mode and draft -------------------------------------------------------------
 
+// What the ingredient list is calculated from: the recipe values, at the batch
+// size chosen for this bake when there is one.
+function shownValues() {
+  return scaleValues(state.values, state.scale);
+}
+
 function applyMode(mode, { persist = false } = {}) {
   state.mode = mode;
+  state.result = calculate(shownValues());
   els.modeBatch.checked = mode === 'batch';
   els.modeUnit.checked = mode === 'unit';
   els.panelBatch.hidden = mode !== 'batch';
@@ -233,7 +261,8 @@ function persistState() {
   saveWorkingState(storage, {
     values: state.values,
     mode: state.mode,
-    activeRecipeId: state.activeRecipeId
+    activeRecipeId: state.activeRecipeId,
+    scale: state.scale
   });
 }
 
@@ -297,7 +326,7 @@ function trimNumber(x) {
 
 function renderResults() {
   const r = state.result;
-  const v = state.values;
+  const v = shownValues();
   const valid = state.validation.valid;
 
   const d = displayRows(r);
@@ -315,7 +344,8 @@ function renderResults() {
   out.levainWater.textContent = formatGrams(d.levainWater);
   els.otherFlours.textContent = trimNumber(r.otherFlourPct);
 
-  els.caption.textContent = state.mode === 'unit' && v.quantity > 1
+  // The read-only view states the batch in its own row instead.
+  els.caption.textContent = !isReadOnly() && state.mode === 'unit' && v.quantity > 1
     ? `Batch for ${v.quantity} units, ${trimNumber(round1(v.totalWeight / v.quantity))} g each`
     : '';
 
@@ -395,8 +425,23 @@ function recipeMeta(r) {
 // A saved recipe opens read-only: ingredients first, the inputs behind Edit,
 // so a stray tap cannot change the amounts. A recipe that is not saved yet has
 // nothing to protect and stays editable.
+function isReadOnly() {
+  return Boolean(state.activeRecipe) && !state.editing;
+}
+
+function sameSize(a, b) {
+  return a.totalWeight === b.totalWeight && a.quantity === b.quantity;
+}
+
 function renderView() {
-  const readOnly = Boolean(state.activeRecipe) && !state.editing;
+  const readOnly = isReadOnly();
+  const scaled = Boolean(state.scale);
+  els.batch.hidden = !readOnly;
+  els.batch.dataset.scaled = String(scaled);
+  els.batchSize.textContent = doughSize(shownValues(), state.mode);
+  els.batchNote.textContent = scaled ? `Recipe: ${doughSize(state.values, state.mode)}` : 'Recipe size';
+  els.batchReset.hidden = !scaled;
+
   els.form.hidden = readOnly;
   els.summary.hidden = !readOnly;
   els.editBar.hidden = !(state.activeRecipe && state.editing);
@@ -462,13 +507,7 @@ function onRecipesChanged(list) {
 
   const latest = list.find((r) => r.id === state.activeRecipeId);
   if (!latest) {
-    state.activeRecipe = null;
-    state.activeRecipeId = null;
-    state.editing = false;
-    state.editSnapshot = null;
-    renderChip();
-    renderView();
-    persistState();
+    detachRecipe();
     toast('This recipe was deleted on another device');
     return;
   }
@@ -480,10 +519,9 @@ function onRecipesChanged(list) {
   if (valuesChanged && !hadLocalEdits) {
     state.values = { ...latest.values };
     state.touched = new Set();
-    state.result = calculate(state.values);
     applyMode(latest.mode, { persist: true });
     // Cancel must not bring back the values this update just replaced.
-    if (state.editing) state.editSnapshot = { values: { ...state.values }, mode: state.mode };
+    if (state.editing) state.editSnapshot = { ...state.editSnapshot, values: { ...state.values }, mode: state.mode };
     toast('Updated from another device');
   } else {
     renderChip();
@@ -589,10 +627,13 @@ async function confirmDiscard() {
   });
 }
 
+// The inputs always hold the recipe's own size, so the batch size of this bake
+// is set aside while they are open.
 function startEditing() {
   state.editing = true;
-  state.editSnapshot = { values: { ...state.values }, mode: state.mode };
-  renderView();
+  state.editSnapshot = { values: { ...state.values }, mode: state.mode, scale: state.scale };
+  state.scale = null;
+  applyMode(state.mode, { persist: true });
   // The inputs appear above the ingredients, so bring them into view.
   window.scrollTo(0, 0);
   els.editDone.focus({ preventScroll: true });
@@ -602,6 +643,10 @@ function startEditing() {
 // the values again the next time they are shown.
 function stopEditing() {
   const focusInBar = els.editBar.contains(document.activeElement);
+  const snapshot = state.editSnapshot;
+  // The batch size of this bake comes back, unless the edit gave the recipe a
+  // new size of its own.
+  if (snapshot && sameSize(snapshot.values, state.values)) state.scale = snapshot.scale;
   state.editing = false;
   state.editSnapshot = null;
   state.touched = new Set();
@@ -615,9 +660,76 @@ function cancelEditing() {
   if (snapshot) {
     state.values = snapshot.values;
     state.mode = snapshot.mode;
-    state.result = calculate(state.values);
   }
   stopEditing();
+}
+
+// The active recipe is gone. What is on screen stays as an unsaved recipe.
+function detachRecipe() {
+  state.values = shownValues();
+  state.scale = null;
+  state.activeRecipe = null;
+  state.activeRecipeId = null;
+  state.editing = false;
+  state.editSnapshot = null;
+  state.touched = new Set();
+  applyMode(state.mode, { persist: true });
+}
+
+function setScale(scale) {
+  state.scale = scale;
+  applyMode(state.mode, { persist: true });
+}
+
+// Reads the batch-size dialog. Returns the scale, or null after showing why
+// the numbers cannot be used.
+function readScaleDialog() {
+  const shown = shownValues();
+  const raw = (field) => scaleFields[field].input.value;
+  const errors = {};
+  let scale = null;
+  if (state.mode === 'unit') {
+    errors.quantity = validateField('quantity', raw('quantity'));
+    errors.unitWeight = validateField('unitWeight', raw('unitWeight'));
+    if (!errors.quantity && !errors.unitWeight) {
+      scale = scaleFromUnits(shown, parseNumber(raw('quantity')), parseNumber(raw('unitWeight')));
+      if (scale.totalWeight > RULES.totalWeight.max) {
+        errors.unitWeight = { message: `Batch above ${RULES.totalWeight.max} g` };
+        scale = null;
+      }
+    }
+  } else {
+    errors.totalWeight = validateField('totalWeight', raw('totalWeight'));
+    if (!errors.totalWeight) scale = { totalWeight: round1(parseNumber(raw('totalWeight'))), quantity: shown.quantity };
+  }
+
+  for (const [field, el] of Object.entries(scaleFields)) {
+    const error = errors[field];
+    el.wrapper.classList.toggle('is-invalid', Boolean(error));
+    el.error.textContent = error ? error.message : '';
+    if (error) el.input.setAttribute('aria-invalid', 'true');
+    else el.input.removeAttribute('aria-invalid');
+  }
+  return scale;
+}
+
+// Opens the batch-size dialog on the size shown now. Apply is handled by the
+// form's submit listener.
+function openScaleDialog() {
+  const unit = state.mode === 'unit';
+  const draft = draftFromValues(shownValues());
+  els.scaleTotalField.hidden = unit;
+  els.scaleUnitFields.hidden = !unit;
+  for (const [field, el] of Object.entries(scaleFields)) {
+    el.input.value = draft[field];
+    el.wrapper.classList.remove('is-invalid');
+    el.error.textContent = '';
+    el.input.removeAttribute('aria-invalid');
+  }
+  els.scaleDialog.showModal();
+  const first = scaleFields[unit ? 'quantity' : 'totalWeight'].input;
+  first.focus();
+  first.select();
 }
 
 function loadValues(values, mode, recipe, draftName = null) {
@@ -625,10 +737,10 @@ function loadValues(values, mode, recipe, draftName = null) {
   state.activeRecipe = recipe;
   state.activeRecipeId = recipe ? recipe.id : null;
   state.draftName = draftName;
+  state.scale = null;
   state.editing = false;
   state.editSnapshot = null;
   state.touched = new Set();
-  state.result = calculate(state.values);
   applyMode(mode, { persist: true });
 }
 
@@ -643,13 +755,15 @@ async function storeActive(record) {
   persistState();
 }
 
-// Saves the current values under `name`, replacing an existing recipe of that
-// name when the user agrees. Returns the stored record or null.
+// Saves what is on screen under `name`, replacing an existing recipe of that
+// name when the user agrees. A batch size chosen for this bake becomes the
+// new recipe's own size. Returns the stored record or null.
 async function saveCurrentAs(name) {
   const existing = await store.findByName(name);
+  const values = shownValues();
   let record;
   if (existing && existing.id === state.activeRecipeId) {
-    record = { ...existing, values: { ...state.values }, mode: state.mode, updatedAt: Date.now() };
+    record = { ...existing, values: { ...values }, mode: state.mode, updatedAt: Date.now() };
   } else if (existing) {
     const replace = await confirmDialog({
       title: `Replace “${existing.name}”?`,
@@ -658,10 +772,12 @@ async function saveCurrentAs(name) {
       danger: false
     });
     if (!replace) return null;
-    record = { ...existing, values: { ...state.values }, mode: state.mode, updatedAt: Date.now() };
+    record = { ...existing, values: { ...values }, mode: state.mode, updatedAt: Date.now() };
   } else {
-    record = createRecipe({ name, values: state.values, mode: state.mode });
+    record = createRecipe({ name, values, mode: state.mode });
   }
+  state.values = values;
+  state.scale = null;
   await storeActive(record);
   stopEditing();
   toast('Saved');
@@ -713,14 +829,8 @@ async function deleteRecipe() {
     danger: true
   });
   if (!ok) return;
-  state.activeRecipe = null;
-  state.activeRecipeId = null;
-  state.editing = false;
-  state.editSnapshot = null;
+  detachRecipe();
   await store.remove(active.id);
-  renderChip();
-  renderView();
-  persistState();
   closeSheet();
   toast('Deleted');
 }
@@ -749,7 +859,7 @@ function baseUrl() {
 
 async function shareRecipe() {
   if (!state.validation.valid) return;
-  const url = buildShareUrl(baseUrl(), { name: currentName(), values: state.values, mode: state.mode });
+  const url = buildShareUrl(baseUrl(), { name: currentName(), values: shownValues(), mode: state.mode });
   const data = { title: `${currentName()} · Rise`, text: 'Sourdough recipe from Rise', url };
   if (navigator.share && (!navigator.canShare || navigator.canShare(data))) {
     try {
@@ -769,7 +879,7 @@ async function shareRecipe() {
 let copyResetTimer = null;
 async function copyRecipe() {
   if (!state.validation.valid) return;
-  const text = formatRecipeText({ name: currentName(), values: state.values, mode: state.mode }, state.result);
+  const text = formatRecipeText({ name: currentName(), values: shownValues(), mode: state.mode }, state.result);
   if (!(await copyText(text))) {
     toast('Copy is not available here');
     return;
@@ -1119,6 +1229,22 @@ function wireEvents() {
   els.editCancel.addEventListener('click', cancelEditing);
   els.editDone.addEventListener('click', stopEditing);
   els.editSave.addEventListener('click', saveRecipe);
+
+  els.batchScale.addEventListener('click', openScaleDialog);
+  els.batchReset.addEventListener('click', () => setScale(null));
+  els.scaleCancel.addEventListener('click', () => els.scaleDialog.close('cancel'));
+  els.scaleForm.addEventListener('submit', (e) => {
+    if (!(e.submitter && e.submitter.value === 'ok')) return;
+    const scale = readScaleDialog();
+    if (scale) {
+      // Choosing the recipe's own size again simply removes the scale.
+      setScale(sameSize(scale, state.values) ? null : scale);
+      return;
+    }
+    e.preventDefault();
+    const invalid = Object.values(scaleFields).find((el) => el.wrapper.classList.contains('is-invalid'));
+    if (invalid) invalid.input.focus();
+  });
 
   els.chip.addEventListener('click', openSheet);
   els.sheetClose.addEventListener('click', closeSheet);

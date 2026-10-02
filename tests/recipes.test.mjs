@@ -171,11 +171,21 @@ test('working state round trip and validation', () => {
   const storage = memStorage();
   assert.equal(loadWorkingState(storage), null);
   assert.equal(saveWorkingState(storage, { values: { ...DEFAULT_VALUES, waterPct: 77 }, mode: 'unit', activeRecipeId: 'abc' }), true);
-  assert.deepEqual(loadWorkingState(storage), { version: 2, values: { ...DEFAULT_VALUES, waterPct: 77 }, mode: 'unit', activeRecipeId: 'abc' });
+  assert.deepEqual(loadWorkingState(storage), { version: 2, values: { ...DEFAULT_VALUES, waterPct: 77 }, mode: 'unit', activeRecipeId: 'abc', scale: null });
   storage.setItem(STATE_KEY, JSON.stringify({ version: 1, values: {} }));
   assert.equal(loadWorkingState(storage), null);
   storage.setItem(STATE_KEY, JSON.stringify({ version: 2, values: { saltPct: 50 }, mode: 'x', activeRecipeId: 5 }));
-  assert.deepEqual(loadWorkingState(storage), { version: 2, values: DEFAULT_VALUES, mode: 'batch', activeRecipeId: null });
+  assert.deepEqual(loadWorkingState(storage), { version: 2, values: DEFAULT_VALUES, mode: 'batch', activeRecipeId: null, scale: null });
+});
+
+test('working state keeps the batch size of the current bake', () => {
+  const storage = memStorage();
+  const scale = { totalWeight: 1500, quantity: 6 };
+  saveWorkingState(storage, { values: DEFAULT_VALUES, mode: 'unit', activeRecipeId: 'abc', scale });
+  assert.deepEqual(loadWorkingState(storage).scale, scale);
+  // A scale that no longer fits the rules is dropped, never repaired.
+  saveWorkingState(storage, { values: DEFAULT_VALUES, mode: 'unit', activeRecipeId: 'abc', scale: { totalWeight: 1500, quantity: 0 } });
+  assert.equal(loadWorkingState(storage).scale, null);
 });
 
 test('planMerge', () => {

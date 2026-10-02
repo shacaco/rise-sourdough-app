@@ -45,6 +45,35 @@ export function applyEdit(values, field, num) {
   return next;
 }
 
+// --- batch size for one bake ------------------------------------------------
+//
+// A scale is { totalWeight, quantity }: the size to bake at. It is kept apart
+// from the recipe values, so choosing it never edits the recipe.
+
+// Recipe values at the scaled size. Inclusions keep their share of the dough.
+export function scaleValues(values, scale) {
+  if (!scale) return values;
+  const inclusions = round1(values.inclusions * scale.totalWeight / values.totalWeight);
+  return {
+    ...values,
+    totalWeight: scale.totalWeight,
+    quantity: scale.quantity,
+    // Rounding must never lift the inclusions up to the whole batch.
+    inclusions: Math.min(inclusions, round1(scale.totalWeight - 0.1))
+  };
+}
+
+// Scale from a per-unit answer. `values` is what is on screen; its unit weight
+// is a rounded projection, so when that number comes back untouched only the
+// quantity ratio is applied and the total cannot drift.
+export function scaleFromUnits(values, quantity, unitWeight) {
+  const untouched = unitWeight === projectToUnit(values).unitWeight;
+  const totalWeight = untouched
+    ? round1(values.totalWeight * quantity / safeQuantity(values))
+    : round1(unitWeight * quantity);
+  return { totalWeight, quantity };
+}
+
 // Which draft fields must be re-derived from canonical after `field` changes.
 export function counterpartFields(field) {
   if (BATCH_FIELDS.includes(field)) return [...UNIT_FIELDS];

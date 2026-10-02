@@ -614,6 +614,44 @@ small { font-size: inherit; }
   gap: var(--sp-2);
 }
 
+/* Batch size for this bake; tinted while it differs from the recipe's own. */
+
+.batch {
+  display: flex;
+  flex-wrap: wrap; /* a long size pushes the buttons to their own line */
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-3);
+  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.batch[data-scaled="true"] {
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+
+.batch__text { white-space: nowrap; }
+
+.batch__size {
+  font: 600 16px/1.3 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.batch__note {
+  font: 400 13px/1.35 var(--font-ui);
+  color: var(--text-muted);
+}
+
+.batch[data-scaled="true"] .batch__note { color: var(--text); }
+
+.batch__actions {
+  display: flex;
+  gap: var(--sp-2);
+  margin-inline-start: auto;
+}
+
 .results__caption {
   font: 400 14px/1.4 var(--font-ui);
   color: var(--text-muted);
@@ -1140,7 +1178,7 @@ dialog:focus-visible { outline: none; }
 
   .skip-link, .app-header__actions, .recipe-chip .icon, .recipe-chip__dot, .seg,
   .field__hint, .results__status, .results__actions, .menu, .sheet, .modal, .toast,
-  .update-pill, .banner, .edit-bar, .summary__head .btn { display: none !important; }
+  .update-pill, .banner, .edit-bar, .summary__head .btn, .batch__actions { display: none !important; }
 
   .app-header { position: static; background: none; border: 0; padding: 0; margin-bottom: 6mm; }
   .app-header__inner { height: auto; padding: 0; gap: var(--sp-3); }
@@ -1151,6 +1189,7 @@ dialog:focus-visible { outline: none; }
   .results.is-stale .results__body { opacity: 1; }
 
   .card, .results { border: 0; border-radius: 0; padding: 0; background: none; box-shadow: none; break-inside: avoid; }
+  .batch { border: 0; padding: 0; background: none; }
   .headline { background: none; border-top: 1pt solid #000; border-bottom: 1pt solid #000; border-radius: 0; padding: 2mm 0; }
   .row { border-bottom: 0.5pt dotted #888; }
 

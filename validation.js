@@ -120,6 +120,19 @@ export function sanitizeValues(partial) {
   return out;
 }
 
+// A stored batch size ({ totalWeight, quantity }) is kept only when both
+// numbers sit inside their rules; anything else means "not scaled".
+export function sanitizeScale(scale) {
+  const totalWeight = parseNumber(scale?.totalWeight);
+  const quantity = parseNumber(scale?.quantity);
+  if (totalWeight === null || quantity === null) return null;
+  const { totalWeight: weightRule, quantity: quantityRule } = RULES;
+  const ok = totalWeight >= weightRule.min && totalWeight <= weightRule.max
+    && quantity >= quantityRule.min && quantity <= quantityRule.max
+    && Number.isInteger(quantity);
+  return ok ? { totalWeight, quantity } : null;
+}
+
 // Strips control characters, collapses whitespace, trims, caps at NAME_MAX.
 export function cleanName(name, fallback = 'Untitled') {
   if (typeof name !== 'string') return fallback;
