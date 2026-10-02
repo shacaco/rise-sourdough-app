@@ -102,7 +102,21 @@ const els = {
   shareDismiss: $('share-dismiss'),
   movedBanner: $('moved-banner'),
   movedExport: $('moved-export'),
-  movedDismiss: $('moved-dismiss')
+  movedDismiss: $('moved-dismiss'),
+  summary: $('summary'),
+  edit: $('edit-recipe'),
+  editBar: $('edit-bar'),
+  editCancel: $('edit-cancel'),
+  editDone: $('edit-done'),
+  editSave: $('edit-save')
+};
+
+const sum = {
+  dough: $('summary-dough'),
+  water: $('summary-water'),
+  salt: $('summary-salt'),
+  levain: $('summary-levain'),
+  flour: $('summary-flour')
 };
 
 const out = {
@@ -142,6 +156,8 @@ const state = {
   activeRecipeId: null,
   activeRecipe: null,
   draftName: null, // name of an opened shared recipe before it is saved
+  editing: false, // a saved recipe is read-only until Edit is pressed
+  editSnapshot: null, // values and mode when Edit was pressed, for Cancel
   recipes: [],
   pendingShare: null
 };
@@ -272,6 +288,7 @@ function renderAll() {
   renderResults();
   renderErrors();
   renderChip();
+  renderView();
 }
 
 function trimNumber(x) {
@@ -364,13 +381,37 @@ function svgIcon(id, className) {
   return svg;
 }
 
-function recipeMeta(r) {
-  const v = r.values;
-  const water = `${trimNumber(v.waterPct)} %`;
-  if (r.mode === 'unit' && v.quantity > 1) {
-    return `${v.quantity} × ${trimNumber(round1(v.totalWeight / v.quantity))} g · ${water}`;
+function doughSize(v, mode) {
+  if (mode === 'unit' && v.quantity > 1) {
+    return `${v.quantity} × ${trimNumber(round1(v.totalWeight / v.quantity))} g`;
   }
-  return `${trimNumber(v.totalWeight)} g · ${water}`;
+  return `${trimNumber(v.totalWeight)} g`;
+}
+
+function recipeMeta(r) {
+  return `${doughSize(r.values, r.mode)} · ${trimNumber(r.values.waterPct)} %`;
+}
+
+// A saved recipe opens read-only: ingredients first, the inputs behind Edit,
+// so a stray tap cannot change the amounts. A recipe that is not saved yet has
+// nothing to protect and stays editable.
+function renderView() {
+  const readOnly = Boolean(state.activeRecipe) && !state.editing;
+  els.form.hidden = readOnly;
+  els.summary.hidden = !readOnly;
+  els.editBar.hidden = !(state.activeRecipe && state.editing);
+  els.editDone.disabled = !state.validation.valid;
+  els.editSave.disabled = !state.validation.valid || !currentlyDirty();
+
+  const v = state.values;
+  const other = state.result.otherFlourPct;
+  sum.dough.textContent = doughSize(v, state.mode);
+  sum.water.textContent = `${trimNumber(v.waterPct)} %`;
+  sum.salt.textContent = `${trimNumber(v.saltPct)} %`;
+  sum.levain.textContent = `${trimNumber(v.levainPct)} % at ${trimNumber(v.levainHydrationPct)} % hydration`;
+  sum.flour.textContent = other > 0
+    ? `${trimNumber(v.whiteFlourPct)} % white, ${trimNumber(other)} % other`
+    : '100 % white';
 }
 
 function renderRecipeList() {
@@ -423,7 +464,10 @@ function onRecipesChanged(list) {
   if (!latest) {
     state.activeRecipe = null;
     state.activeRecipeId = null;
+    state.editing = false;
+    state.editSnapshot = null;
     renderChip();
+    renderView();
     persistState();
     toast('This recipe was deleted on another device');
     return;
@@ -438,9 +482,12 @@ function onRecipesChanged(list) {
     state.touched = new Set();
     state.result = calculate(state.values);
     applyMode(latest.mode, { persist: true });
+    // Cancel must not bring back the values this update just replaced.
+    if (state.editing) state.editSnapshot = { values: { ...state.values }, mode: state.mode };
     toast('Updated from another device');
   } else {
     renderChip();
+    renderView();
   }
 }
 
@@ -542,11 +589,44 @@ async function confirmDiscard() {
   });
 }
 
+function startEditing() {
+  state.editing = true;
+  state.editSnapshot = { values: { ...state.values }, mode: state.mode };
+  renderView();
+  // The inputs appear above the ingredients, so bring them into view.
+  window.scrollTo(0, 0);
+  els.editDone.focus({ preventScroll: true });
+}
+
+// Back to the read-only view. Half-typed input is dropped so the fields match
+// the values again the next time they are shown.
+function stopEditing() {
+  const focusInBar = els.editBar.contains(document.activeElement);
+  state.editing = false;
+  state.editSnapshot = null;
+  state.touched = new Set();
+  applyMode(state.mode, { persist: true });
+  window.scrollTo(0, 0);
+  if (focusInBar) els.edit.focus({ preventScroll: true });
+}
+
+function cancelEditing() {
+  const snapshot = state.editSnapshot;
+  if (snapshot) {
+    state.values = snapshot.values;
+    state.mode = snapshot.mode;
+    state.result = calculate(state.values);
+  }
+  stopEditing();
+}
+
 function loadValues(values, mode, recipe, draftName = null) {
   state.values = { ...values };
   state.activeRecipe = recipe;
   state.activeRecipeId = recipe ? recipe.id : null;
   state.draftName = draftName;
+  state.editing = false;
+  state.editSnapshot = null;
   state.touched = new Set();
   state.result = calculate(state.values);
   applyMode(mode, { persist: true });
@@ -583,6 +663,7 @@ async function saveCurrentAs(name) {
     record = createRecipe({ name, values: state.values, mode: state.mode });
   }
   await storeActive(record);
+  stopEditing();
   toast('Saved');
   return record;
 }
@@ -591,6 +672,7 @@ async function saveRecipe() {
   if (state.activeRecipe) {
     const updated = { ...state.activeRecipe, values: { ...state.values }, mode: state.mode, updatedAt: Date.now() };
     await storeActive(updated);
+    if (state.editing) stopEditing();
     closeSheet();
     toast('Saved');
     return;
@@ -633,8 +715,11 @@ async function deleteRecipe() {
   if (!ok) return;
   state.activeRecipe = null;
   state.activeRecipeId = null;
+  state.editing = false;
+  state.editSnapshot = null;
   await store.remove(active.id);
   renderChip();
+  renderView();
   persistState();
   closeSheet();
   toast('Deleted');
@@ -1029,6 +1114,11 @@ function wireEvents() {
   els.form.addEventListener('change', (e) => {
     if (e.target && e.target.name === 'mode' && e.target.checked) applyMode(e.target.value, { persist: true });
   });
+
+  els.edit.addEventListener('click', startEditing);
+  els.editCancel.addEventListener('click', cancelEditing);
+  els.editDone.addEventListener('click', stopEditing);
+  els.editSave.addEventListener('click', saveRecipe);
 
   els.chip.addEventListener('click', openSheet);
   els.sheetClose.addEventListener('click', closeSheet);

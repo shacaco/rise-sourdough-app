@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-app-version="2026.09.28-7">
+<html lang="en" data-app-version="2026.10.02-1">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -44,7 +44,7 @@
     "image": "https://shacaco.github.io/rise-sourdough-app/og-image.png",
     "softwareVersion": "2.0",
     "datePublished": "2024-01-01",
-    "dateModified": "2026-09-28",
+    "dateModified": "2026-10-02",
     "inLanguage": "en"
   }
   </script>
@@ -77,6 +77,7 @@
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
     <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
     <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
     <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
@@ -111,28 +112,39 @@
         </button>
       </div>
     </div>
+
+    <div class="edit-bar" id="edit-bar" hidden>
+      <div class="edit-bar__inner">
+        <p class="edit-bar__text">Editing</p>
+        <div class="edit-bar__actions">
+          <button type="button" class="btn btn--ghost btn--sm" id="edit-cancel">Cancel</button>
+          <button type="button" class="btn btn--ghost btn--sm" id="edit-done" title="Keep the changes without saving them to the recipe">Done</button>
+          <button type="button" class="btn btn--primary btn--sm" id="edit-save">Save</button>
+        </div>
+      </div>
+    </div>
   </header>
 
   <main id="main" class="layout">
+    <div class="banner" id="moved-banner" role="status" hidden>
+      <p class="banner__text">Rise has a new home. Move your recipes to the new app and add it to your home screen from there.</p>
+      <div class="banner__actions">
+        <button type="button" class="btn btn--primary btn--sm" id="moved-export">Move my recipes</button>
+        <button type="button" class="btn btn--ghost btn--sm" id="moved-dismiss">Later</button>
+      </div>
+    </div>
+
+    <div class="banner" id="share-banner" role="status" hidden>
+      <p class="banner__text" id="share-banner-text"></p>
+      <div class="banner__actions">
+        <button type="button" class="btn btn--primary btn--sm" id="share-open">Open</button>
+        <button type="button" class="btn btn--primary btn--sm" id="share-save" hidden>Save to my recipes</button>
+        <button type="button" class="btn btn--ghost btn--sm" id="share-dismiss">Dismiss</button>
+      </div>
+    </div>
+
     <form id="calc-form" class="inputs" novalidate autocomplete="off" aria-labelledby="inputs-title">
       <h2 id="inputs-title" class="sr-only">Recipe inputs</h2>
-
-      <div class="banner" id="moved-banner" role="status" hidden>
-        <p class="banner__text">Rise has a new home. Move your recipes to the new app and add it to your home screen from there.</p>
-        <div class="banner__actions">
-          <button type="button" class="btn btn--primary btn--sm" id="moved-export">Move my recipes</button>
-          <button type="button" class="btn btn--ghost btn--sm" id="moved-dismiss">Later</button>
-        </div>
-      </div>
-
-      <div class="banner" id="share-banner" role="status" hidden>
-        <p class="banner__text" id="share-banner-text"></p>
-        <div class="banner__actions">
-          <button type="button" class="btn btn--primary btn--sm" id="share-open">Open</button>
-          <button type="button" class="btn btn--primary btn--sm" id="share-save" hidden>Save to my recipes</button>
-          <button type="button" class="btn btn--ghost btn--sm" id="share-dismiss">Dismiss</button>
-        </div>
-      </div>
 
       <fieldset class="seg" id="mode-seg">
         <legend class="sr-only">Calculation mode</legend>
@@ -338,6 +350,22 @@
           <div class="row"><dt class="row__label">Water</dt><dd class="row__value" id="levain-water-result"></dd></div>
         </dl>
       </div>
+    </section>
+
+    <section class="card summary" id="summary" aria-labelledby="summary-title" hidden>
+      <div class="summary__head">
+        <h2 class="card__title" id="summary-title">Recipe</h2>
+        <button type="button" class="btn btn--ghost btn--sm" id="edit-recipe" title="Change the dough size or the formula">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-edit"/></svg><span>Edit</span>
+        </button>
+      </div>
+      <dl class="rows">
+        <div class="row"><dt class="row__label">Dough</dt><dd class="row__value" id="summary-dough"></dd></div>
+        <div class="row"><dt class="row__label">Water</dt><dd class="row__value" id="summary-water"></dd></div>
+        <div class="row"><dt class="row__label">Salt</dt><dd class="row__value" id="summary-salt"></dd></div>
+        <div class="row"><dt class="row__label">Levain</dt><dd class="row__value" id="summary-levain"></dd></div>
+        <div class="row"><dt class="row__label">Flour mix</dt><dd class="row__value" id="summary-flour"></dd></div>
+      </dl>
     </section>
   </main>
 
